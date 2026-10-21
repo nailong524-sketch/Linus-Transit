@@ -930,7 +930,20 @@ function setupEventListeners() {
       navigator.clipboard.writeText(lanUrlText.textContent).then(() => {
         btnCopyLanUrl.innerHTML = '<i class="fa-solid fa-check"></i> Tersalin!';
         setTimeout(() => {
-          btnCopyLanUrl.innerHTML = '<i class="fa-solid fa-copy"></i> Salin';
+          btnCopyLanUrl.innerHTML = '<i class="fa-solid fa-copy"></i> Salin (Wi-Fi)';
+        }, 2000);
+      });
+    });
+  }
+
+  const btnCopyHttpsUrl = document.getElementById("btn-copy-https-url");
+  const httpsUrlText = document.getElementById("https-url-text");
+  if (btnCopyHttpsUrl && httpsUrlText) {
+    btnCopyHttpsUrl.addEventListener("click", () => {
+      navigator.clipboard.writeText(httpsUrlText.textContent).then(() => {
+        btnCopyHttpsUrl.innerHTML = '<i class="fa-solid fa-check"></i> Tersalin!';
+        setTimeout(() => {
+          btnCopyHttpsUrl.innerHTML = '<i class="fa-solid fa-lock"></i> Salin HTTPS';
         }, 2000);
       });
     });
