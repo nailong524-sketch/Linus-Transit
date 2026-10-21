@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>LinUS - Peta Rute Bus Kampus Universitas Sumatera Utara (USU)</title>
+  <meta name="description"
+    content="Peta interaktif rute Bus LinUS (Lintas USU), panduan halte kampus, jadwal kedatangan bus real-time, dan pemantau kondisi jalan di Universitas Sumatera Utara, Medan.">
+
+  <!-- Progressive Web App (PWA) Meta & Manifest -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#059669">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="LinUS USU">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- FontAwesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Top App Navigation Bar -->
+  <header class="app-header">
+    <div class="logo-container">
+      <div class="logo-icon" style="background: linear-gradient(135deg, #059669 0%, #0284c7 100%);">
+        <i class="fa-solid fa-bus-simple"></i>
+      </div>
+      <div>
+        <div class="brand-title">
+          LinUS USU
+          <span class="brand-badge"
+            style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);">
+            KAMPUS PADANG BULAN
+          </span>
+        </div>
+        <div class="brand-subtitle">Peta Rute Bus Kampus & Navigasi Perjalanan Universitas Sumatera Utara</div>
+      </div>
+    </div>
+
+    <div class="header-status-area">
+      <!-- Tombol Akses di HP / Scan QR -->
+      <button class="btn-open-mobile" id="btn-open-mobile" title="Buka di Smartphone / Scan QR">
+        <i class="fa-solid fa-mobile-screen-button"></i>
+        <span>Buka di HP</span>
+      </button>
+
+      <div class="live-indicator">
+        <span class="pulse-dot" style="background: #10b981; box-shadow: 0 0 10px #10b981;"></span>
+        <span>Layanan Bus Aktif (07.00 - 17.00 WIB)</span>
+      </div>
+
+      <div class="time-display" id="realtime-clock">
+        <i class="fa-regular fa-clock"></i> 00:00:00 WIB
+      </div>
+
+      <div class="header-actions">
+        <button class="btn-toggle-sidebar" id="btn-toggle-sidebar" title="Menu Panel">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Live Announcements Ticker -->
+  <div class="ticker-bar">
+    <div class="ticker-label">
+      <i class="fa-solid fa-bullhorn" style="color: #38bdf8;"></i>
+      <span>INFO BUS USU:</span>
+    </div>
+    <div class="ticker-content" id="ticker-track">
+      <!-- Diisi otomatis oleh JavaScript -->
+    </div>
+  </div>
+
+  <!-- Quick Landmark Shortcut Bar (Sesuai Peta Google Maps USU) -->
+  <div class="campus-landmark-bar">
+    <span class="landmark-bar-label"><i class="fa-solid fa-compass"></i> Pintasan Lokasi USU:</span>
+    <button class="btn-landmark-chip" onclick="flyToCampusLandmark('rektorat')">
+      <i class="fa-solid fa-building-columns" style="color: #34d399;"></i> Auditorium & Rektorat
+    </button>
+    <button class="btn-landmark-chip" onclick="flyToCampusLandmark('teknik')">
+      <i class="fa-solid fa-gear" style="color: #f59e0b;"></i> Fak. Teknik (Jl. Almamater)
+    </button>
+    <button class="btn-landmark-chip" onclick="flyToCampusLandmark('polmed')">
+      <i class="fa-solid fa-graduation-cap" style="color: #a855f7;"></i> POLMED
+    </button>
+    <button class="btn-landmark-chip" onclick="flyToCampusLandmark('fasilkom')">
+      <i class="fa-solid fa-capsules" style="color: #06b6d4;"></i> Fak. Farmasi (Tri Dharma)
+    </button>
+    <button class="btn-landmark-chip" onclick="flyToCampusLandmark('perpus')">
+      <i class="fa-solid fa-book-open" style="color: #38bdf8;"></i> Perpustakaan & Pendopo
+    </button>
+    <button class="btn-landmark-chip" onclick="flyToCampusLandmark('feb')">
+      <i class="fa-solid fa-chart-line" style="color: #fb923c;"></i> Fak. Ekonomi (FEB)
+    </button>
+    <button class="btn-landmark-chip" onclick="flyToCampusLandmark('rsusu')">
+      <i class="fa-solid fa-hospital" style="color: #f43f5e;"></i> RS USU
+    </button>
+    <button class="btn-landmark-chip" onclick="flyToCampusLandmark('pintu1')">
+      <i class="fa-solid fa-archway" style="color: #818cf8;"></i> Pintu 1 Mansyur
+    </button>
+    <button class="btn-landmark-chip" onclick="flyToCampusLandmark('pintu4')">
+      <i class="fa-solid fa-door-open" style="color: #facc15;"></i> Pintu 4 USU
+    </button>
+    <button class="btn-landmark-chip" onclick="flyToCampusLandmark('pusat')"
+      style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.5); color: #34d399;">
+      <i class="fa-solid fa-expand"></i> Peta Penuh USU
+    </button>
+    <button class="btn-landmark-chip" id="chip-open-mobile" style="background: rgba(16, 185, 129, 0.25); border-color: #10b981; color: #34d399; font-weight: 800;">
+      <i class="fa-solid fa-mobile-screen-button"></i> Buka di HP (QR)
+    </button>
+  </div>
+
+  <!-- Main Container: Sidebar + Map -->
+  <main class="main-wrapper">
+
+    <!-- Sidebar Panel (Trip Planner, Traffic, Schedules, Guide) -->
+    <aside class="app-sidebar">
+      <!-- Mobile Sheet Drag Handle -->
+      <div class="sidebar-drag-handle" id="sheet-drag-handle" style="display:none;" title="Tutup / Buka Panel"></div>
+
+      <nav class="sidebar-tabs">
+        <button class="tab-btn active" data-tab="pane-planner">
+          <i class="fa-solid fa-diamond-turn-right"></i>
+          <span>Cari Rute</span>
+        </button>
+        <button class="tab-btn" data-tab="pane-traffic">
+          <i class="fa-solid fa-traffic-light"></i>
+          <span>Lalu Lintas</span>
+        </button>
+        <button class="tab-btn" data-tab="pane-schedule">
+          <i class="fa-solid fa-bus-simple"></i>
+          <span>Jadwal Halte</span>
+        </button>
+        <button class="tab-btn" data-tab="pane-guide">
+          <i class="fa-solid fa-circle-info"></i>
+          <span>Panduan USU</span>
+        </button>
+      </nav>
+
+      <div class="tab-content">
+
+        <!-- ==================== TAB 1: CARI RUTE ==================== -->
+        <div class="tab-pane active" id="pane-planner">
+          <div class="panel-header">
+            <h2><i class="fa-solid fa-compass" style="color: var(--accent-emerald);"></i> Rute Perjalanan Bus USU</h2>
+            <p>Pilih halte asal dan tujuan di area kampus Padang Bulan untuk melihat rekomendasi Bus LinUS tercepat.</p>
+          </div>
+
+          <div class="route-card">
+            <div class="planner-inputs">
+              <div class="input-group">
+                <i class="fa-solid fa-location-dot input-icon origin"></i>
+                <select id="select-origin" class="planner-select">
+                  <!-- Diisi lewat JS -->
+                </select>
+              </div>
+
+              <button class="btn-swap-locations" id="btn-swap-locations" title="Tukar Asal dan Tujuan">
+                <i class="fa-solid fa-arrow-up-down"></i>
+              </button>
+
+              <div class="input-group">
+                <i class="fa-solid fa-flag-checkered input-icon dest"></i>
+                <select id="select-dest" class="planner-select">
+                  <!-- Diisi lewat JS -->
+                </select>
+              </div>
+            </div>
+
+            <div class="mode-filter-row">
+              <button class="btn-mode-chip active" data-mode="all">
+                <i class="fa-solid fa-layer-group"></i> Semua Koridor
+              </button>
+              <button class="btn-mode-chip" data-mode="LIN-01">
+                <i class="fa-solid fa-rotate"></i> Lin 1 (Lingkar)
+              </button>
+              <button class="btn-mode-chip" data-mode="LIN-02">
+                <i class="fa-solid fa-flask"></i> Lin 2 (Sains)
+              </button>
+              <button class="btn-mode-chip" data-mode="LIN-03">
+                <i class="fa-solid fa-landmark"></i> Lin 3 (Sosio)
+              </button>
+              <button class="btn-mode-chip" data-mode="EV-USU">
+                <i class="fa-solid fa-bolt"></i> E-Shuttle
+              </button>
+            </div>
+
+            <button class="btn-search-route" id="btn-search-route"
+              style="background: linear-gradient(135deg, #059669 0%, #0284c7 100%);">
+              <i class="fa-solid fa-magnifying-glass-location"></i> Temukan Rute Bus LinUS
+            </button>
+          </div>
+
+          <div class="results-section-title">
+            <span>Rekomendasi Perjalanan Bus LinUS</span>
+            <span style="font-size:0.75rem; color:var(--accent-emerald);"><i class="fa-solid fa-shield-halved"></i> 100%
+              Gratis Civitas</span>
+          </div>
+
+          <div id="route-results-list">
+            <!-- Kartu rekomendasi rute dirender via JS -->
+          </div>
+        </div>
+
+        <!-- ==================== TAB 2: PANTAU LALU LINTAS KAMPUS ==================== -->
+        <div class="tab-pane" id="pane-traffic">
+          <div class="panel-header">
+            <h2><i class="fa-solid fa-triangle-exclamation" style="color: var(--traffic-yellow);"></i> Pantauan Gerbang
+              & Jalan USU</h2>
+            <p>Kondisi akses gerbang luar dan sirkulasi jalan internal di dalam kampus Padang Bulan.</p>
+          </div>
+
+          <div class="traffic-overview-box">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:0.85rem; font-weight:700; color:var(--text-main);">Kondisi Akses Kampus</span>
+              <span
+                style="font-size:0.75rem; background:rgba(16,185,129,0.2); color:#6ee7b7; padding:3px 8px; border-radius:999px; font-weight:700;">Tertib
+                & Lancar</span>
+            </div>
+
+            <div class="traffic-stats-grid">
+              <div class="traffic-stat-card">
+                <div class="stat-value" style="color: #ef4444;">1</div>
+                <div class="stat-label">Gerbang Padat</div>
+              </div>
+              <div class="traffic-stat-card">
+                <div class="stat-value" style="color: #eab308;">2</div>
+                <div class="stat-label">Ramai Lancar</div>
+              </div>
+              <div class="traffic-stat-card">
+                <div class="stat-value" style="color: #22c55e;">25 km/h</div>
+                <div class="stat-label">Kec. Aman Kampus</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="traffic-legend-mini">
+            <div class="legend-item">
+              <div class="legend-color-bar" style="background:var(--traffic-green);"></div>
+              <span>Lancar (&gt;25 km/h)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color-bar" style="background:var(--traffic-yellow);"></div>
+              <span>Ramai (15-25 km/h)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color-bar" style="background:var(--traffic-red);"></div>
+              <span>Padat (&lt;15 km/h)</span>
+            </div>
+          </div>
+
+          <div class="results-section-title">
+            <span>Daftar Ruas Jalan & Titik Pantauan</span>
+          </div>
+
+          <div id="traffic-hotspots-list">
+            <!-- Kartu titik macet dirender via JS -->
+          </div>
+        </div>
+
+        <!-- ==================== TAB 3: JADWAL & HALTE ==================== -->
+        <div class="tab-pane" id="pane-schedule">
+          <div class="panel-header">
+            <h2><i class="fa-solid fa-clock" style="color: var(--accent-emerald);"></i> Papan Jadwal Kedatangan Bus</h2>
+            <p>Estimasi waktu kedatangan armada Bus LinUS (ETA) di halte dan zona bus kampus terdekat.</p>
+          </div>
+
+          <div style="margin-bottom: 14px;">
+            <label
+              style="display:block; font-size:0.75rem; color:var(--text-muted); margin-bottom:6px; font-weight:600;">PILIH
+              HALTE ATAU ZONA BUS USU:</label>
+            <select id="select-schedule-stop" class="planner-select" style="padding-left:14px;">
+              <!-- Opsi halte -->
+            </select>
+          </div>
+
+          <div class="departures-table-card">
+            <div
+              style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--border-color);">
+              <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted);"><i
+                  class="fa-solid fa-tower-broadcast" style="color:#10b981;"></i> STATUS KEDATANGAN ARMADA</span>
+              <span style="font-size:0.7rem; color:var(--accent-emerald); font-weight:700;">LIVE FEED</span>
+            </div>
+
+            <div id="departures-list-container">
+              <!-- Baris jadwal armada dirender via JS -->
+            </div>
+          </div>
+
+          <div
+            style="margin-top:20px; background:rgba(16,185,129,0.06); border:1px dashed rgba(16,185,129,0.3); border-radius:var(--radius-md); padding:14px; font-size:0.8rem; color:var(--text-muted);">
+            <i class="fa-solid fa-circle-info" style="color:var(--accent-emerald); margin-right:6px;"></i>
+            <b>Tips Menunggu Bus LinUS:</b> Armada bus kampus berkeliling terus-menerus. Posisi bus diperbarui secara
+            real-time melalui simulasi sensor GPS di peta.
+          </div>
+        </div>
+
+        <!-- ==================== TAB 4: PANDUAN & ATURAN BUS USU ==================== -->
+        <div class="tab-pane" id="pane-guide">
+          <div class="panel-header">
+            <h2><i class="fa-solid fa-book-open" style="color: var(--accent-cyan);"></i> Panduan Layanan Bus LinUS</h2>
+            <p>Ketentuan, aturan, dan tata tertib penggunaan transportasi bus di lingkungan Universitas Sumatera Utara.
+            </p>
+          </div>
+
+          <div class="route-card" style="margin-bottom:14px;">
+            <h4 style="font-size:0.9rem; margin-bottom:8px; color:var(--accent-emerald);"><i
+                class="fa-solid fa-id-card"></i> 100% Gratis dengan KTM</h4>
+            <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.5;">
+              Layanan Bus LinUS (Lintas USU) disediakan secara <b>gratis tanpa dipungut biaya</b> bagi seluruh
+              mahasiswa, dosen, dan staf tendik USU. Penumpang diwajibkan menunjukkan <b>Kartu Tanda Mahasiswa (KTM)</b>
+              atau kartu civitas aktif kepada pengemudi saat menaiki bus.
+            </p>
+          </div>
+
+          <div class="route-card" style="margin-bottom:14px;">
+            <h4 style="font-size:0.9rem; margin-bottom:8px; color:var(--accent-blue);"><i
+                class="fa-solid fa-door-open"></i> Tata Cara Pintu Naik Penumpang</h4>
+            <ul style="font-size:0.8rem; color:var(--text-muted); line-height:1.6; padding-left:18px;">
+              <li><b>Penumpang Pria (Laki-laki):</b> Menaiki bus melalui <b>pintu depan</b>.</li>
+              <li><b>Penumpang Wanita (Perempuan):</b> Menaiki bus melalui <b>pintu belakang</b>.</li>
+              <li>Turun dengan tertib setelah bus berhenti sempurna di Halte / Zona Bus USU.</li>
+            </ul>
+          </div>
+
+          <div class="route-card" style="margin-bottom:14px;">
+            <h4 style="font-size:0.9rem; margin-bottom:8px; color:var(--accent-amber);"><i
+                class="fa-solid fa-clock"></i> Jadwal Operasional Bus</h4>
+            <ul style="font-size:0.8rem; color:var(--text-muted); line-height:1.6; padding-left:18px;">
+              <li><b>Hari Operasi:</b> Senin s.d. Jumat (Hari kerja perkuliahan aktif).</li>
+              <li><b>Jam Layanan:</b> 07.00 – 17.00 WIB.</li>
+              <li><b>Interval Kedatangan (Headway):</b> 5 – 10 menit pada jam sibuk perkuliahan.</li>
+            </ul>
+          </div>
+
+          <div class="route-card" style="margin-bottom:14px;">
+            <h4 style="font-size:0.9rem; margin-bottom:8px; color:var(--accent-cyan);"><i class="fa-solid fa-leaf"></i>
+              USU Green Campus & E-Shuttle</h4>
+            <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.5;">
+              Pengoperasian armada bus dan mobil listrik (E-Shuttle) di dalam kampus Padang Bulan bertujuan menekan
+              emisi gas buang, mengurangi kepadatan parkir kendaraan pribadi di fakultas, dan menciptakan lingkungan
+              belajar yang asri dan sejuk.
+            </p>
+          </div>
+
+          <div class="route-card">
+            <h4 style="font-size:0.9rem; margin-bottom:8px; color:var(--text-main);"><i
+                class="fa-solid fa-shield-halved"></i> Posko Keamanan & Bantuan</h4>
+            <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.5;">
+              Bila mengalami kendala barang tertinggal di bus atau membutuhkan bantuan medis darurat, silakan hubungi
+              Pos Satpam Pintu 1 USU atau Posko IGD RS USU (061) 8218985.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- Map View Area -->
+    <section class="map-container">
+
+      <!-- Quick Status Overlay -->
+      <div class="map-status-pill">
+        <i class="fa-solid fa-circle" style="color:var(--traffic-green); font-size:8px;"></i>
+        <span>Memantau 4 Koridor Bus LinUS & 15 Titik Halte Kampus USU</span>
+      </div>
+
+      <!-- Floating Map Control Buttons -->
+      <div class="map-floating-toolbar">
+        <button class="map-tool-btn active" id="tool-toggle-basemap" title="Ganti Tampilan Peta (Satelit / Jalan)">
+          <i class="fa-solid fa-earth-asia"></i>
+        </button>
+        <button class="map-tool-btn active" id="tool-toggle-routes" title="Toggle Rute Bus LinUS">
+          <i class="fa-solid fa-route"></i>
+        </button>
+        <button class="map-tool-btn active" id="tool-toggle-stops" title="Toggle Halte / Zona Bus USU">
+          <i class="fa-solid fa-bus"></i>
+        </button>
+        <button class="map-tool-btn active" id="tool-toggle-traffic" title="Toggle Pantauan Lalu Lintas Jalan">
+          <i class="fa-solid fa-traffic-light"></i>
+        </button>
+        <button class="map-tool-btn" id="tool-reset-campus" title="Pusatkan ke Kampus USU">
+          <i class="fa-solid fa-school"></i>
+        </button>
+        <button class="map-tool-btn" id="tool-open-mobile" title="Buka di HP (Scan QR)">
+          <i class="fa-solid fa-mobile-screen-button" style="color: #34d399;"></i>
+        </button>
+        <button class="map-tool-btn" id="tool-locate" title="Pusatkan ke Lokasi Saya">
+          <i class="fa-solid fa-crosshairs"></i>
+        </button>
+      </div>
+
+      <!-- Floating Traffic & Transit Legend -->
+      <div class="map-floating-legend">
+        <div class="legend-title">
+          <i class="fa-solid fa-layer-group"></i> Keterangan Peta Bus USU
+        </div>
+        <div class="legend-rows">
+          <div class="legend-row">
+            <span class="color-bar smooth"></span>
+            <span>Lancar (&gt;25 km/jam)</span>
+          </div>
+          <div class="legend-row">
+            <span class="color-bar moderate"></span>
+            <span>Ramai (15-25 km/jam)</span>
+          </div>
+          <div class="legend-row">
+            <span class="color-bar congested"></span>
+            <span>Padat Gerbang (&lt;15 km/jam)</span>
+          </div>
+          <div class="legend-row" style="margin-top:4px; padding-top:4px; border-top:1px solid rgba(255,255,255,0.08);">
+            <i class="fa-solid fa-bus" style="color:#0284c7; font-size:12px;"></i>
+            <span>Halte / Zona Bus LinUS USU</span>
+          </div>
+          <div class="legend-row">
+            <i class="fa-solid fa-circle-dot" style="color:#10b981; font-size:12px;"></i>
+            <span>Armada Bus Bergerak (Live GPS)</span>
+          </div>
+          <div class="legend-row">
+            <i class="fa-solid fa-satellite" style="color:#38bdf8; font-size:12px;"></i>
+            <span>Tampilan Google Satelit Hybrid</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leaflet Target Map Element -->
+      <div id="map"></div>
+    </section>
+
+  </main>
+
+  <!-- Mobile Bottom Navigation Bar (Khusus Layar HP) -->
+  <nav class="mobile-bottom-nav">
+    <button class="mobile-nav-item active" data-tab="pane-planner">
+      <i class="fa-solid fa-diamond-turn-right"></i>
+      <span>Cari Rute</span>
+    </button>
+    <button class="mobile-nav-item" data-tab="pane-traffic">
+      <i class="fa-solid fa-traffic-light"></i>
+      <span>Lalu Lintas</span>
+    </button>
+    <button class="mobile-nav-item" data-tab="pane-schedule">
+      <i class="fa-solid fa-bus-simple"></i>
+      <span>Jadwal</span>
+    </button>
+    <button class="mobile-nav-item" data-tab="pane-guide">
+      <i class="fa-solid fa-circle-info"></i>
+      <span>Panduan</span>
+    </button>
+    <button class="mobile-nav-item" id="btn-mobile-map-toggle">
+      <i class="fa-solid fa-map-location-dot"></i>
+      <span>Peta Penuh</span>
+    </button>
+  </nav>
+
+  <!-- Modal Dialog Buka di HP / Scan QR -->
+  <div class="mobile-modal-overlay" id="mobile-modal">
+    <div class="mobile-modal-card">
+      <button class="btn-close-modal-x" id="btn-close-mobile-modal">&times;</button>
+      <div style="font-size:1.6rem; color:#10b981; margin-bottom:6px;">
+        <i class="fa-solid fa-mobile-screen-button"></i>
+      </div>
+      <h3 style="font-size:1.15rem; font-weight:800; color:#fff;">Buka LinUS di HP Anda</h3>
+      <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">
+        Scan QR Code di bawah menggunakan kamera HP (pastikan HP terhubung ke Wi-Fi yang sama):
+      </p>
+
+      <img class="qr-code-img" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=http://192.168.100.7:5050" alt="QR Code LinUS USU">
+
+      <div class="url-copy-box">
+        <span class="url-copy-text" id="lan-url-text">http://192.168.100.7:5050</span>
+        <button class="btn-copy-url" id="btn-copy-lan-url"><i class="fa-solid fa-copy"></i> Salin</button>
+      </div>
+
+      <div style="text-align:left; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:12px; font-size:0.75rem; color:#cbd5e1;">
+        <b style="color:#38bdf8;"><i class="fa-solid fa-download"></i> Cara Pasang Jadi Aplikasi HP (PWA):</b>
+        <ul style="margin-top:6px; padding-left:18px; line-height:1.5;">
+          <li><b>Android (Chrome):</b> Buka link di atas, ketuk menu titik tiga (⋮) di kanan atas, pilih <b>"Tambahkan ke Layar Utama"</b> atau <b>"Instal Aplikasi"</b>.</li>
+          <li><b>iPhone (Safari):</b> Buka link di atas, ketuk tombol <b>Bagikan (Share / tanda kotak panah ke atas)</b>, lalu pilih <b>"Tambah ke Layar Utama" (Add to Home Screen)</b>.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS CDN -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- App Datasets & Application Logic -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
