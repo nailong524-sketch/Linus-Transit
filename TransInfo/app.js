@@ -1013,11 +1013,121 @@ function setupEventListeners() {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').then(
-      (reg) => console.log('LinUS PWA Service Worker aktif:', reg.scope),
+      (reg) => {
+        console.log('LinUS PWA Service Worker aktif:', reg.scope);
+        // Periksa pembaruan service worker secara proaktif
+        reg.update();
+      },
       (err) => console.log('Gagal mendaftarkan Service Worker:', err)
     );
   });
 }
+
+// -------------------------------------------------------------
+// PWA Installation & Android Homescreen Trigger
+// -------------------------------------------------------------
+let deferredInstallPrompt = null;
+const pwaInstallBanner = document.getElementById("pwa-install-banner");
+const btnPwaInstall = document.getElementById("btn-pwa-install");
+const btnPwaBannerClose = document.getElementById("btn-pwa-banner-close");
+const btnInstallHeader = document.getElementById("btn-install-header");
+const modalInstallGuide = document.getElementById("modal-install-guide");
+const btnClosePwaGuide = document.getElementById("btn-close-pwa-guide");
+const btnGuideUnderstand = document.getElementById("btn-guide-understand");
+const btnModalInstallTrigger = document.getElementById("btn-modal-install-trigger");
+
+// 1. Tangkap event beforeinstallprompt dari browser Android
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  console.log("PWA beforeinstallprompt siap dipanggil");
+  // Tampilkan floating banner di layar HP jika belum di-dismiss di sesi ini
+  if (pwaInstallBanner && !sessionStorage.getItem("pwa_banner_dismissed")) {
+    pwaInstallBanner.classList.add("visible");
+  }
+});
+
+function openPwaGuideModal() {
+  if (modalInstallGuide) modalInstallGuide.classList.add("open");
+}
+
+function closePwaGuideModal() {
+  if (modalInstallGuide) modalInstallGuide.classList.remove("open");
+}
+
+async function triggerPwaInstallation() {
+  if (deferredInstallPrompt) {
+    try {
+      deferredInstallPrompt.prompt();
+      const choice = await deferredInstallPrompt.userChoice;
+      console.log("Pilihan instalasi pengguna:", choice.outcome);
+      if (choice.outcome === "accepted") {
+        if (pwaInstallBanner) pwaInstallBanner.classList.remove("visible");
+        closePwaGuideModal();
+      }
+      deferredInstallPrompt = null;
+    } catch (err) {
+      console.error("Gagal memicu install prompt:", err);
+      openPwaGuideModal();
+    }
+  } else {
+    // Jika prompt native belum siap atau di iOS Safari / browser lain
+    openPwaGuideModal();
+  }
+}
+
+if (btnPwaInstall) {
+  btnPwaInstall.addEventListener("click", triggerPwaInstallation);
+}
+
+if (btnInstallHeader) {
+  btnInstallHeader.addEventListener("click", triggerPwaInstallation);
+}
+
+if (btnModalInstallTrigger) {
+  btnModalInstallTrigger.addEventListener("click", triggerPwaInstallation);
+}
+
+if (btnPwaBannerClose && pwaInstallBanner) {
+  btnPwaBannerClose.addEventListener("click", () => {
+    pwaInstallBanner.classList.remove("visible");
+    sessionStorage.setItem("pwa_banner_dismissed", "true");
+  });
+}
+
+if (btnClosePwaGuide) {
+  btnClosePwaGuide.addEventListener("click", closePwaGuideModal);
+}
+
+if (btnGuideUnderstand) {
+  btnGuideUnderstand.addEventListener("click", closePwaGuideModal);
+}
+
+if (modalInstallGuide) {
+  modalInstallGuide.addEventListener("click", (e) => {
+    if (e.target === modalInstallGuide) {
+      closePwaGuideModal();
+    }
+  });
+}
+
+// Deteksi saat aplikasi berhasil terinstal di layar HP
+window.addEventListener("appinstalled", () => {
+  console.log("LinUS USU berhasil diinstal ke Home Screen!");
+  if (pwaInstallBanner) pwaInstallBanner.classList.remove("visible");
+  closePwaGuideModal();
+});
+
+// Tampilkan banner otomatis di smartphone setelah 2 detik
+window.addEventListener("load", () => {
+  if (window.innerWidth <= 800 && !sessionStorage.getItem("pwa_banner_dismissed")) {
+    setTimeout(() => {
+      if (pwaInstallBanner && !window.matchMedia("(display-mode: standalone)").matches) {
+        pwaInstallBanner.classList.add("visible");
+      }
+    }, 2000);
+  }
+});
 
 // -------------------------------------------------------------
 // 14. Helper Fungsi Terbuka untuk Popup & Komponen

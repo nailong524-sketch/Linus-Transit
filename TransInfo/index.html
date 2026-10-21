@@ -15,7 +15,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="LinUS USU">
-  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
   <link rel="icon" type="image/svg+xml" href="icon.svg">
 
   <!-- Google Fonts: Plus Jakarta Sans -->
@@ -25,7 +27,7 @@
     rel="stylesheet">
 
   <!-- FontAwesome 6 Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -56,10 +58,16 @@
     </div>
 
     <div class="header-status-area">
-      <!-- Tombol Akses di HP / Scan QR -->
+      <!-- Tombol Akses di HP / Scan QR (Untuk Layar Laptop/PC) -->
       <button class="btn-open-mobile" id="btn-open-mobile" title="Buka di Smartphone / Scan QR">
         <i class="fa-solid fa-mobile-screen-button"></i>
         <span>Buka di HP</span>
+      </button>
+
+      <!-- Tombol Pasang di HP (Tampil khusus di Layar Smartphone) -->
+      <button class="btn-install-header" id="btn-install-header" title="Pasang LinUS di Layar HP">
+        <i class="fa-solid fa-cloud-arrow-down"></i>
+        <span>Pasang di HP</span>
       </button>
 
       <div class="live-indicator">
@@ -498,6 +506,77 @@
           <li><b>iPhone (Safari):</b> Buka link di atas, ketuk tombol <b>Bagikan (Share / tanda kotak panah ke atas)</b>, lalu pilih <b>"Tambah ke Layar Utama" (Add to Home Screen)</b>.</li>
         </ul>
       </div>
+    </div>
+  </div>
+
+  <!-- Floating PWA Install Bar (Khusus Layar HP Smartphone) -->
+  <aside class="pwa-install-banner" id="pwa-install-banner" aria-label="Instal Aplikasi LinUS USU">
+    <div class="pwa-banner-left">
+      <img src="icon-192.png" alt="LinUS USU" class="pwa-banner-icon">
+      <div class="pwa-banner-info">
+        <div class="pwa-banner-title">Pasang LinUS di Layar HP</div>
+        <div class="pwa-banner-subtitle">
+          <span class="live-status-dot"></span> Selalu ONLINE & Akses 1-Ketuk
+        </div>
+      </div>
+    </div>
+    <div class="pwa-banner-actions">
+      <button class="btn-pwa-install-action" id="btn-pwa-install">
+        <i class="fa-solid fa-download"></i> Pasang
+      </button>
+      <button class="btn-pwa-banner-close" id="btn-pwa-banner-close" title="Tutup Banner">&times;</button>
+    </div>
+  </aside>
+
+  <!-- Modal Dialog Panduan Resmi Pasang Aplikasi ke Layar Utama HP -->
+  <div class="mobile-modal-overlay" id="modal-install-guide">
+    <div class="mobile-modal-card pwa-guide-card">
+      <button class="btn-close-modal-x" id="btn-close-pwa-guide">&times;</button>
+      
+      <div style="width:64px; height:64px; margin:0 auto 10px auto; border-radius:18px; overflow:hidden; box-shadow: 0 8px 24px rgba(5,150,105,0.45); border: 2px solid rgba(56, 189, 248, 0.4);">
+        <img src="icon-192.png" alt="LinUS USU" style="width:100%; height:100%; object-fit:cover;">
+      </div>
+
+      <h3 style="font-size:1.25rem; font-weight:800; color:#fff; margin-bottom:4px;">
+        Pasang LinUS USU ke Layar HP
+      </h3>
+      <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); padding:4px 12px; border-radius:999px; font-size:0.75rem; color:#34d399; font-weight:700; margin-bottom:14px;">
+        <span class="live-status-dot"></span> Status: ONLINE & Terhubung Server Vercel
+      </div>
+
+      <!-- Tombol Pemicu Pasang Langsung -->
+      <button class="btn-direct-install-now" id="btn-modal-install-trigger">
+        <i class="fa-solid fa-cloud-arrow-down"></i> Ketuk Disini untuk Pasang ke HP
+      </button>
+
+      <!-- Peringatan Offline VS Online -->
+      <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 12px; padding: 11px 14px; margin: 14px 0 12px 0; text-align: left; font-size: 0.77rem; color: #fca5a5;">
+        <div style="font-weight: 800; color: #f87171; display:flex; align-items:center; gap:6px;">
+          <i class="fa-solid fa-triangle-exclamation"></i> Kenapa Sebelumnya Muncul "Offline"?
+        </div>
+        <div style="margin-top: 5px; line-height: 1.5; color: #fecaca;">
+          Status <b>"Offline"</b> muncul jika Anda menekan tombol panah download (<b><i class="fa-solid fa-arrow-down"></i></b>) di menu Chrome. Tombol panah tersebut hanya mendownload file halaman mati.
+        </div>
+      </div>
+
+      <!-- Panduan Resmi 3 Langkah -->
+      <div style="text-align:left; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:12px 14px; font-size:0.78rem; color:#e2e8f0;">
+        <div style="color:#38bdf8; font-weight:800; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
+          <i class="fa-solid fa-mobile-screen"></i> Cara Pasang Agar Muncul di Layar Utama HP:
+        </div>
+        <ol style="margin:0; padding-left:18px; line-height:1.65;">
+          <li>Ketuk menu <b>Titik Tiga (⋮)</b> di pojok kanan atas Google Chrome.</li>
+          <li>Pilih menu <b>"Tambahkan ke Layar Utama"</b> atau <b>"Instal Aplikasi"</b> (ikon handphone dengan tanda panah).</li>
+          <li>Ketuk <b>"Instal"</b> pada pop-up konfirmasi yang muncul.</li>
+        </ol>
+        <div style="margin-top:8px; padding-top:6px; border-top:1px dashed rgba(255,255,255,0.1); font-size:0.73rem; color:#94a3b8;">
+          ✨ Setelah dipasang, buka Layar Depan HP Anda. Ikon <b>LinUS USU</b> akan muncul seperti aplikasi biasa dan statusnya selalu <b>ONLINE</b>!
+        </div>
+      </div>
+
+      <button class="btn-guide-understand" id="btn-guide-understand">
+        <i class="fa-solid fa-circle-check"></i> Mengerti, Kembali ke Peta
+      </button>
     </div>
   </div>
 

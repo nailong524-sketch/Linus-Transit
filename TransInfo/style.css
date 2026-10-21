@@ -1453,3 +1453,212 @@ body {
   cursor: pointer !important;
 }
 
+/* ---------------- Tombol Pasang di HP (Header) ---------------- */
+.btn-install-header {
+  display: none;
+  align-items: center;
+  gap: 7px;
+  background: linear-gradient(135deg, #059669 0%, #0284c7 100%);
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.4);
+}
+
+/* ---------------- Floating PWA Install Banner ---------------- */
+.pwa-install-banner {
+  position: fixed;
+  top: 68px;
+  left: 12px;
+  right: 12px;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  border-radius: 16px;
+  padding: 10px 14px;
+  z-index: 1300;
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(5, 150, 105, 0.25);
+  animation: slideDownBanner 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pwa-install-banner.visible {
+  display: flex !important;
+}
+
+@keyframes slideDownBanner {
+  from {
+    transform: translateY(-25px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.pwa-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pwa-banner-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.pwa-banner-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.pwa-banner-subtitle {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+}
+
+.live-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  display: inline-block;
+  box-shadow: 0 0 8px #10b981;
+}
+
+.pwa-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-pwa-install-action {
+  background: linear-gradient(135deg, #059669 0%, #0284c7 100%);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4);
+  white-space: nowrap;
+}
+
+.btn-pwa-banner-close {
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: #94a3b8;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-pwa-banner-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.pwa-guide-card {
+  max-width: 440px !important;
+  text-align: center;
+}
+
+.btn-direct-install-now {
+  width: 100%;
+  background: linear-gradient(135deg, #059669 0%, #0284c7 100%);
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.btn-direct-install-now:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(5, 150, 105, 0.55);
+}
+
+.btn-guide-understand {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-top: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-guide-understand:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ---------------- Aturan Khusus Layar HP Kecil (<= 680px) ---------------- */
+@media (max-width: 680px) {
+  .app-header {
+    padding: 8px 12px !important;
+  }
+  .brand-subtitle {
+    display: none !important;
+  }
+  .btn-open-mobile {
+    display: none !important;
+  }
+  .btn-install-header {
+    display: inline-flex !important;
+  }
+  .header-status-area .live-indicator {
+    display: none !important;
+  }
+  .brand-title {
+    font-size: 1.05rem !important;
+  }
+  .brand-badge {
+    display: none !important;
+  }
+  .pwa-install-banner {
+    top: 60px !important;
+    left: 8px !important;
+    right: 8px !important;
+    padding: 8px 12px !important;
+  }
+}
+
+

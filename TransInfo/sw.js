@@ -1,9 +1,9 @@
 /**
- * LinUS USU - Service Worker
- * Menyimpan cache aset aplikasi agar cepat dimuat di HP & dapat diinstal sebagai PWA
+ * LinUS USU - Service Worker v2 (Network-First Online Priority)
+ * Mengutamakan koneksi online aktif dengan data armada bus kampus real-time
  */
 
-const CACHE_NAME = 'linus-usu-v1';
+const CACHE_NAME = 'linus-usu-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -11,7 +11,11 @@ const ASSETS_TO_CACHE = [
   './app.js',
   './data.js',
   './manifest.json',
-  './icon.svg'
+  './icon.svg',
+  './icon-192.png',
+  './icon-512.png',
+  './icon-maskable.png',
+  './apple-touch-icon.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -39,20 +43,30 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Hanya intercept GET requests
   if (event.request.method !== 'GET') return;
 
+  // Utamakan Network (Online First) agar data peta & bus kampus selalu live dan akurat
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).catch(() => {
-        // Jika offline dan aset tidak ada, fallback ke index.html
-        if (event.request.mode === 'navigate') {
-          return caches.match('./index.html');
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            if (event.request.url.startsWith(self.location.origin)) {
+              cache.put(event.request, responseToCache);
+            }
+          });
         }
-      });
-    })
+        return networkResponse;
+      })
+      .catch(() => {
+        // Fallback ke cache hanya jika kuota habis / offline total
+        return caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) return cachedResponse;
+          if (event.request.mode === 'navigate') {
+            return caches.match('./index.html');
+          }
+        });
+      })
   );
 });
