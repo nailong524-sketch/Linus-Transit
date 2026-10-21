@@ -949,6 +949,19 @@ function setupEventListeners() {
     });
   }
 
+  const btnCopyVercelUrl = document.getElementById("btn-copy-vercel-url");
+  const vercelUrlText = document.getElementById("vercel-url-text");
+  if (btnCopyVercelUrl && vercelUrlText) {
+    btnCopyVercelUrl.addEventListener("click", () => {
+      navigator.clipboard.writeText(vercelUrlText.textContent).then(() => {
+        btnCopyVercelUrl.innerHTML = '<i class="fa-solid fa-check"></i> Tersalin!';
+        setTimeout(() => {
+          btnCopyVercelUrl.innerHTML = '<i class="fa-solid fa-lock"></i> Salin Link Resmi';
+        }, 2000);
+      });
+    });
+  }
+
   // Mobile Bottom Navigation Bar (Khusus Layar HP)
   const mobileNavItems = document.querySelectorAll(".mobile-nav-item");
   const btnMobileMapToggle = document.getElementById("btn-mobile-map-toggle");
