@@ -61,20 +61,23 @@ function Make-Icon([int]$sz, [string]$path) {
     $g.FillRectangle($darkBrush, [int]($sz * 0.25), [int]($sz * 0.70), [int]($sz * 0.12), [int]($sz * 0.08))
     $g.FillRectangle($darkBrush, [int]($sz * 0.63), [int]($sz * 0.70), [int]($sz * 0.12), [int]($sz * 0.08))
 
-    # Text LINUS USU
-    $fontSize = [float]($sz * 0.075)
+    # Text LINUS TRANSIT
+    $fontSize = [float]($sz * 0.055)
     $font = New-Object System.Drawing.Font('Arial', $fontSize, [System.Drawing.FontStyle]::Bold)
     $strFormat = New-Object System.Drawing.StringFormat
     $strFormat.Alignment = [System.Drawing.StringAlignment]::Center
-    $g.DrawString('LINUS USU', $font, $whiteBrush, [float]($sz / 2.0), [float]($sz * 0.81), $strFormat)
+    $g.DrawString('LINUS TRANSIT', $font, $whiteBrush, [float]($sz / 2.0), [float]($sz * 0.81), $strFormat)
 
     $bmp.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
     $g.Dispose()
     $bmp.Dispose()
 }
 
-Make-Icon 192 'd:\Project\icon-192.png'
-Make-Icon 512 'd:\Project\icon-512.png'
-Make-Icon 512 'd:\Project\icon-maskable.png'
-Make-Icon 180 'd:\Project\apple-touch-icon.png'
+$baseDir = $PSScriptRoot
+if (-not $baseDir) { $baseDir = "." }
+
+Make-Icon 192 "$baseDir\icon-192.png"
+Make-Icon 512 "$baseDir\icon-512.png"
+Make-Icon 512 "$baseDir\icon-maskable.png"
+Make-Icon 180 "$baseDir\apple-touch-icon.png"
 Write-Output 'ICONS_GENERATED_SUCCESSFULLY'

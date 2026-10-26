@@ -1,7 +1,8 @@
 /**
- * LinUS - Dataset Transportasi Bus Kampus & Kemacetan Lalu Lintas
+ * Linus Transit - Dataset Transportasi Bus Kampus & Kemacetan Lalu Lintas
  * Wilayah: Universitas Sumatera Utara (USU), Kampus Padang Bulan, Medan
  * Koordinat Pusat: 3.561676, 98.6563423
+ * Diverifikasi akurat sesuai Google Maps & Rute Aktif Kampus USU
  */
 
 const TRANSINFO_DATA = {
@@ -15,261 +16,344 @@ const TRANSINFO_DATA = {
     farePolicy: "Gratis Rp 0 (Wajib Tunjukkan KTM / Kartu Civitas Akademika)"
   },
 
-  // Titik Halte / Zona Bus USU (Tepat Sesuai Peta Google Maps USU)
+  // Titik Halte / Zona Bus USU (8 Halte Aktif Terverifikasi)
   stops: [
     {
-      id: "HLT-01",
-      name: "Halte Pintu 1 USU (Jl. Dr. Mansyur - Gerbang Utama)",
-      type: "bus",
-      modeLabel: "Gerbang Utama Jl. Dr. Mansyur",
-      lat: 3.56685,
-      lng: 98.65914,
-      address: "Jl. Dr. Mansyur No. 9, Pintu Masuk 1 USU",
-      facilities: ["Pos Satpam Utama", "Papan Rute LinUS", "Jalur Pedestrian", "Drop-Off Penumpang"],
-      lines: ["LIN-01", "LIN-02"]
+      "id": "HLT-01",
+      "name": "Halte Linus Transit Pintu 1",
+      "type": "bus",
+      "modeLabel": "Halte 1 • Gerbang Utama Jl. Universitas",
+      "lat": 3.56645,
+      "lng": 98.6602,
+      "address": "Jl. Universitas (Samping Bank BTN & PT PAS, Gerbang Pintu 1 USU)",
+      "facilities": [
+        "Papan Informasi Linus Transit",
+        "Bank BTN USU",
+        "SCORA FK USU",
+        "Links-USU",
+        "Pos Satpam Utama"
+      ],
+      "lines": [
+        "LIN-01",
+        "LIN-02",
+        "LIN-03"
+      ]
     },
     {
-      id: "HLT-02",
-      name: "Halte Auditorium & Biro Rektor USU",
-      type: "bus",
-      modeLabel: "Auditorium & Sentral Rektorat",
-      lat: 3.56460,
-      lng: 98.65600,
-      address: "Jl. Sivitas Akademika / Depan Auditorium USU",
-      facilities: ["Auditorium Kampus", "Taman Rektorat", "Kanopi Teduh", "Akses Difabel", "Wi-Fi Eduroam"],
-      lines: ["LIN-01", "LIN-02", "LIN-03", "EV-USU"]
+      "id": "HLT-02",
+      "name": "Halte Linus Transit Gelanggang Mahasiswa",
+      "type": "bus",
+      "modeLabel": "Halte 2 • Pusat Kegiatan & Gelanggang Olahraga",
+      "lat": 3.56465,
+      "lng": 98.66022,
+      "address": "Jl. Universitas (Depan Gelanggang Mahasiswa USU)",
+      "facilities": [
+        "Gelanggang Mahasiswa",
+        "Stadion Olahraga",
+        "Kantin & Gazebo",
+        "Pohon Rindang"
+      ],
+      "lines": [
+        "LIN-01",
+        "LIN-02",
+        "LIN-03"
+      ]
     },
     {
-      id: "HLT-03",
-      name: "Halte Rumah Sakit USU (RS USU)",
-      type: "bus",
-      modeLabel: "Layanan Kesehatan & RS Pendidikan",
-      lat: 3.56580,
-      lng: 98.65180,
-      address: "Jl. Dr. Mansyur No. 66 (Depan Gedung RS USU)",
-      facilities: ["Drop-Off IGD 24 Jam", "Ruang Tunggu Ber-AC", "Farmasi", "Integrasi Angkot Medan"],
-      lines: ["LIN-01", "LIN-02"]
+      "id": "HLT-03",
+      "name": "Halte Hukum & FIB USU",
+      "type": "bus",
+      "modeLabel": "Halte 3 • Klaster Humaniora & Pintu Sumber",
+      "lat": 3.5582,
+      "lng": 98.6604,
+      "address": "Jl. Universitas (Area Fakultas Hukum & Fakultas Ilmu Budaya, Pintu Sumber)",
+      "facilities": [
+        "Gedung FH USU",
+        "Gedung FIB USU",
+        "Akses Pintu Sumber",
+        "Taman Sastra",
+        "Pos Pengamanan"
+      ],
+      "lines": [
+        "LIN-01",
+        "LIN-03"
+      ]
     },
     {
-      id: "HLT-04",
-      name: "Halte Fakultas Kedokteran (FK USU)",
-      type: "bus",
-      modeLabel: "Klaster Kedokteran",
-      lat: 3.56540,
-      lng: 98.65820,
-      address: "Jl. Dr. Mansyur / Kompleks FK USU",
-      facilities: ["Kanopi Halte", "Lampu Penerangan", "Akses Lab Biomedik", "Rambu Zona Bus USU"],
-      lines: ["LIN-01", "LIN-02"]
+      "id": "HLT-04",
+      "name": "Halte FISIP USU",
+      "type": "bus",
+      "modeLabel": "Halte 4 • Fakultas Ilmu Sosial & Ilmu Politik",
+      "lat": 3.55645,
+      "lng": 98.6572,
+      "address": "Jl. Dr. A. Sofian (Depan Gedung Fakultas Ilmu Sosial & Ilmu Politik USU)",
+      "facilities": [
+        "Gedung FISIP USU",
+        "Tax Center FISIP",
+        "Taman Diskusi",
+        "Jalur Pedestrian Rindang"
+      ],
+      "lines": [
+        "LIN-01",
+        "LIN-03"
+      ]
     },
     {
-      id: "HLT-05",
-      name: "Halte FKG & Pintu 2 USU",
-      type: "bus",
-      modeLabel: "Fakultas Kedokteran Gigi & Pintu 2",
-      lat: 3.56360,
-      lng: 98.65980,
-      address: "Jl. Alumni / Area FKG USU",
-      facilities: ["RS Gigi & Mulut", "Kantin Mahasiswa", "Area Parkir", "Pos Satpam"],
-      lines: ["LIN-01", "LIN-03"]
+      "id": "HLT-05",
+      "name": "Halte FEB USU (Fakultas Ekonomi dan Bisnis)",
+      "type": "bus",
+      "modeLabel": "Halte 5 • Fakultas Ekonomi dan Bisnis",
+      "lat": 3.5577,
+      "lng": 98.65635,
+      "address": "Jl. Prof. Hanafiah (Depan Gedung Fakultas Ekonomi & Bisnis / Anwar Karim Building)",
+      "facilities": [
+        "Plaza Utama FEB",
+        "Gedung Anwar Karim",
+        "Kantin FEB",
+        "ATM Center",
+        "Kanopi Pejalan Kaki"
+      ],
+      "lines": [
+        "LIN-01",
+        "LIN-03",
+        "EV-USU"
+      ]
     },
     {
-      id: "HLT-06",
-      name: "Halte Perpustakaan Pusat & Pendopo (Gedung Pancasila)",
-      type: "bus",
-      modeLabel: "Pusat Literasi & Danau USU",
-      lat: 3.56120,
-      lng: 98.65840,
-      address: "Jl. Perpustakaan, Depan Gedung Pancasila & Danau",
-      facilities: ["Gedung Pancasila (Pendopo)", "Perpustakaan Pusat", "Pemandangan Danau", "Wi-Fi Eduroam"],
-      lines: ["LIN-01", "LIN-02", "LIN-03", "EV-USU"]
+      "id": "HLT-06",
+      "name": "Halte FMIPA USU",
+      "type": "bus",
+      "modeLabel": "Halte 6 • Fakultas MIPA & Klaster Sains",
+      "lat": 3.55906,
+      "lng": 98.6546,
+      "address": "Jl. Bioteknologi (Depan Parkir Unit 2 FMIPA & Program Doktor Matematika USU)",
+      "facilities": [
+        "Papan Halte FMIPA",
+        "Parkir Mobil Unit 2 FMIPA",
+        "Gedung S3 Matematika & Fisika",
+        "Pohon Rindang",
+        "Wi-Fi Eduroam"
+      ],
+      "lines": [
+        "LIN-01",
+        "LIN-02",
+        "EV-USU"
+      ]
     },
     {
-      id: "HLT-07",
-      name: "Halte POLMED & Gelanggang Mahasiswa",
-      type: "bus",
-      modeLabel: "Politeknik Negeri Medan & Olahraga",
-      lat: 3.56380,
-      lng: 98.65380,
-      address: "Jl. Politeknik / Jl. Sivitas Akademika",
-      facilities: ["Gedung POLMED", "Stadion Mini USU", "Gelanggang Olahraga", "Kantin Mahasiswa"],
-      lines: ["LIN-01", "LIN-02"]
+      "id": "HLT-07",
+      "name": "Halte Fakultas Vokasi & Bioteknologi",
+      "type": "bus",
+      "modeLabel": "Halte 7 • Fakultas Vokasi & Riset Bioteknologi",
+      "lat": 3.5582,
+      "lng": 98.65398,
+      "address": "Jl. Bioteknologi / Gedung Vokasi",
+      "facilities": [
+        "Gedung Vokasi USU",
+        "Laboratorium Bioteknologi",
+        "Kantin Sehat"
+      ],
+      "lines": [
+        "LIN-01",
+        "LIN-02",
+        "LIN-03",
+        "EV-USU"
+      ]
     },
     {
-      id: "HLT-08",
-      name: "Halte Fakultas Farmasi & Fasilkom-TI",
-      type: "bus",
-      modeLabel: "Fakultas Farmasi & Komputer (TI)",
-      lat: 3.56080,
-      lng: 98.65370,
-      address: "Jl. Tri Dharma, Depan Gedung Fakultas Farmasi",
-      facilities: ["Masjid As-Syifa' Farmasi", "Lab Komputer TI", "Charging Station", "Taman Diskusi"],
-      lines: ["LIN-02", "EV-USU"]
-    },
-    {
-      id: "HLT-09",
-      name: "Halte Fakultas Vokasi & Bioteknologi",
-      type: "bus",
-      modeLabel: "Fakultas Vokasi & Riset Bioteknologi",
-      lat: 3.55850,
-      lng: 98.65420,
-      address: "Jl. Bioteknologi / Gedung Vokasi",
-      facilities: ["Gedung Vokasi USU", "Laboratorium Bioteknologi", "Kantin Sehat"],
-      lines: ["LIN-02", "LIN-03"]
-    },
-    {
-      id: "HLT-10",
-      name: "Halte Fakultas Teknik (FT USU / Jl. Almamater)",
-      type: "bus",
-      modeLabel: "Klaster Teknik & Magister Sipil",
-      lat: 3.56168,
-      lng: 98.65634,
-      address: "Jl. Almamater (Pusat Kampus USU)",
-      facilities: ["Magister Teknik Sipil", "Gedung Kuliah Bersama (GKB)", "Bengkel & Lab", "Halte Baja"],
-      lines: ["LIN-01", "LIN-02", "EV-USU"]
-    },
-    {
-      id: "HLT-11",
-      name: "Halte Pertanian & Kehutanan",
-      type: "bus",
-      modeLabel: "Fakultas Pertanian & Magister Kehutanan",
-      lat: 3.55740,
-      lng: 98.65300,
-      address: "Jl. Bioteknologi Ujung / Magister Kehutanan",
-      facilities: ["Greenhouse Pertanian", "Kebun Percobaan", "Pepohonan Rindang"],
-      lines: ["LIN-02", "EV-USU"]
-    },
-    {
-      id: "HLT-12",
-      name: "Halte Fakultas Ekonomi dan Bisnis (FEB USU)",
-      type: "bus",
-      modeLabel: "Fakultas Ekonomi dan Bisnis",
-      lat: 3.55800,
-      lng: 98.65850,
-      address: "Jl. Prof. T.M. Hanafiah / Dekat FISIP B",
-      facilities: ["Plaza FEB", "Gedung B FISIP", "ATM Center", "Kafe Mahasiswa"],
-      lines: ["LIN-01", "LIN-03"]
-    },
-    {
-      id: "HLT-13",
-      name: "Halte Fakultas Hukum & Ilmu Sosial (FH USU)",
-      type: "bus",
-      modeLabel: "Fakultas Hukum & Ilmu Sejarah",
-      lat: 3.55840,
-      lng: 98.66030,
-      address: "Jl. Universitas / Jl. Abdul Hakim",
-      facilities: ["Gedung Peradilan Semu FH", "Gedung Pascasarjana", "Kantin Asri"],
-      lines: ["LIN-01", "LIN-03"]
-    },
-    {
-      id: "HLT-14",
-      name: "Halte FISIP & FIB USU",
-      type: "bus",
-      modeLabel: "FISIP, Pascasarjana & Budaya",
-      lat: 3.55920,
-      lng: 98.65760,
-      address: "Jl. Almamater / Gedung Pascasarjana FISIP",
-      facilities: ["Gedung Pascasarjana FISIP", "Taman Diskusi", "Jalur Pedestrian Rindang"],
-      lines: ["LIN-01", "LIN-03"]
-    },
-    {
-      id: "HLT-15",
-      name: "Halte Pintu 4 USU (Akses Pajus & Jamin Ginting)",
-      type: "bus",
-      modeLabel: "Pintu 4 USU & Pajus Padang Bulan",
-      lat: 3.56380,
-      lng: 98.65150,
-      address: "Jl. Tri Dharma Barat / Pintu 4 USU",
-      facilities: ["Gerbang Pintu 4", "Dekat Pajus Padang Bulan", "Pangkalan Ojek Online", "Akses Angkot"],
-      lines: ["LIN-01", "LIN-03", "EV-USU"]
+      "id": "HLT-08",
+      "name": "Halte Linus Transit Pintu 4",
+      "type": "bus",
+      "modeLabel": "Halte 8 • Pintu 4 USU & Parkiran Stadion Mini",
+      "lat": 3.5638,
+      "lng": 98.65295,
+      "address": "Jl. Tri Dharma (Depan Parkiran Stadion Mini USU / Akses Pintu 4)",
+      "facilities": [
+        "Akses Pintu 4 USU",
+        "Parkiran Stadion Mini USU",
+        "Shelter Bus",
+        "Papan Informasi Linus Transit",
+        "Kantin Mahasiswa"
+      ],
+      "lines": [
+        "LIN-01",
+        "LIN-02",
+        "LIN-03",
+        "EV-USU"
+      ]
     }
   ],
 
-  // Rute Transportasi Bus Kampus LinUS USU (Tepat Mengikuti Jalanan Kampus)
+  // Rute Transportasi Bus Kampus Linus Transit USU (Tepat Mengikuti Jalanan Kampus Berdasarkan Data Jalan Nyata)
   routes: [
     {
       id: "LIN-01",
       code: "LIN-1",
-      name: "LinUS Koridor 1 (Lingkar Utama Kampus USU)",
+      name: "Linus Transit Koridor 1 (Lingkar Utama Kampus USU)",
       type: "bus",
-      typeName: "Bus LinUS Reguler",
+      typeName: "Linus Transit Reguler",
       badgeColor: "#0284c7", // Sky blue
       fare: 0,
       fareFormatted: "Gratis Rp 0 (Tunjukkan KTM)",
       operatingHours: "07.00 - 17.00 WIB",
       headway: "5 - 8 Menit",
-      distanceKm: "4.2 km (Loop Utama)",
-      estimatedDurationMinutes: 15,
-      stopIds: ["HLT-01", "HLT-04", "HLT-02", "HLT-07", "HLT-15", "HLT-08", "HLT-10", "HLT-14", "HLT-12", "HLT-13", "HLT-06", "HLT-05", "HLT-01"],
+      distanceKm: "3.9 km (Loop Utama)",
+      estimatedDurationMinutes: 12,
+      stopIds: [
+        "HLT-01", "HLT-02", "HLT-03", "HLT-04", "HLT-05", "HLT-06", "HLT-07", "HLT-08", "HLT-01"
+      ],
       path: [
-        [3.56685, 98.65914], // Pintu 1 Mansyur
-        [3.56540, 98.65820], // FK USU
-        [3.56460, 98.65600], // Auditorium & Sivitas Akademika
-        [3.56380, 98.65380], // POLMED & Gelanggang
-        [3.56380, 98.65150], // Pintu 4 USU
-        [3.56080, 98.65370], // Farmasi & Tri Dharma
-        [3.55930, 98.65640], // Simpang Bioteknologi
-        [3.56168, 98.65634], // FT USU / Jl. Almamater
-        [3.55920, 98.65760], // Pascasarjana FISIP
-        [3.55800, 98.65850], // FEB USU
-        [3.55840, 98.66030], // FH USU / Jl. Universitas
-        [3.56120, 98.65840], // Perpustakaan & Pendopo
-        [3.56360, 98.65980], // FKG & Alumni
-        [3.56685, 98.65914]  // Kembali ke Pintu 1
+        [3.56733, 98.66008],
+        [3.56685, 98.66014],
+        [3.56645, 98.6602],
+        [3.5658, 98.66018],
+        [3.56465, 98.66022],
+        [3.5638, 98.66024],
+        [3.5628, 98.66026],
+        [3.5615, 98.66028],
+        [3.56, 98.66032],
+        [3.559, 98.66036],
+        [3.5582, 98.6604],
+        [3.5574, 98.66044],
+        [3.5566, 98.66048],
+        [3.5564, 98.66],
+        [3.55642, 98.6588],
+        [3.55645, 98.658],
+        [3.55645, 98.6572],
+        [3.55642, 98.6566],
+        [3.5564, 98.65615],
+        [3.5571, 98.65625],
+        [3.5577, 98.65635],
+        [3.5582, 98.65615],
+        [3.5586, 98.6559],
+        [3.55906, 98.65588],
+        [3.55906, 98.655],
+        [3.55906, 98.6546],
+        [3.55906, 98.65403],
+        [3.5586, 98.654],
+        [3.5582, 98.65398],
+        [3.5586, 98.654],
+        [3.55906, 98.65403],
+        [3.55905, 98.65299],
+        [3.56068, 98.65302],
+        [3.56181, 98.65305],
+        [3.56309, 98.65301],
+        [3.5638, 98.65295],
+        [3.5644, 98.65315],
+        [3.5644, 98.6538],
+        [3.5642, 98.6555],
+        [3.5646, 98.656],
+        [3.5651, 98.6566],
+        [3.56545, 98.6573],
+        [3.5657, 98.6582],
+        [3.56578, 98.6592],
+        [3.5658, 98.66018],
+        [3.56645, 98.6602],
+        [3.56733, 98.66008]
       ]
     },
     {
       id: "LIN-02",
       code: "LIN-2",
-      name: "LinUS Koridor 2 (Klaster Sains, Medis & Teknologi)",
+      name: "Linus Transit Koridor 2 (Klaster Sains & Teknologi)",
       type: "bus",
-      typeName: "Bus LinUS Sains & Medis",
+      typeName: "Linus Transit Sains & Teknologi",
       badgeColor: "#10b981", // Emerald green
       fare: 0,
       fareFormatted: "Gratis Rp 0 (Tunjukkan KTM)",
       operatingHours: "07.00 - 17.00 WIB",
       headway: "7 - 10 Menit",
-      distanceKm: "3.6 km",
-      estimatedDurationMinutes: 13,
-      stopIds: ["HLT-03", "HLT-01", "HLT-04", "HLT-02", "HLT-07", "HLT-08", "HLT-09", "HLT-10", "HLT-11"],
+      distanceKm: "3.2 km",
+      estimatedDurationMinutes: 11,
+      stopIds: [
+        "HLT-01", "HLT-02", "HLT-06", "HLT-07", "HLT-08", "HLT-01"
+      ],
       path: [
-        [3.56580, 98.65180], // RS USU (Mansyur)
-        [3.56685, 98.65914], // Pintu 1 Mansyur
-        [3.56540, 98.65820], // FK USU
-        [3.56460, 98.65600], // Auditorium USU
-        [3.56380, 98.65380], // POLMED
-        [3.56080, 98.65370], // Farmasi
-        [3.55850, 98.65420], // Vokasi & Bioteknologi
-        [3.55740, 98.65300], // Kehutanan & Pertanian
-        [3.55930, 98.65640], // Bioteknologi - Almamater
-        [3.56168, 98.65634], // FT USU
-        [3.56460, 98.65600]  // Kembali ke Auditorium
+        [3.56733, 98.66008],
+        [3.56685, 98.66014],
+        [3.56645, 98.6602],
+        [3.5658, 98.66018],
+        [3.5652, 98.6602],
+        [3.56465, 98.66022],
+        [3.5638, 98.6593],
+        [3.563, 98.6584],
+        [3.563, 98.6572],
+        [3.5634, 98.6562],
+        [3.5642, 98.6555],
+        [3.5644, 98.6538],
+        [3.5644, 98.65315],
+        [3.5638, 98.65295],
+        [3.56309, 98.65301],
+        [3.56181, 98.65305],
+        [3.56068, 98.65302],
+        [3.55905, 98.65299],
+        [3.55906, 98.65403],
+        [3.55906, 98.6546],
+        [3.55906, 98.65403],
+        [3.5582, 98.65398],
+        [3.55905, 98.65299],
+        [3.56181, 98.65305],
+        [3.5638, 98.65295],
+        [3.5644, 98.65315],
+        [3.5642, 98.6555],
+        [3.5651, 98.6566],
+        [3.5658, 98.66018],
+        [3.56645, 98.6602],
+        [3.56733, 98.66008]
       ]
     },
     {
       id: "LIN-03",
       code: "LIN-3",
-      name: "LinUS Koridor 3 (Klaster Sosio-Humaniora & Pajus)",
+      name: "Linus Transit Koridor 3 (Klaster Sosio-Humaniora)",
       type: "bus",
-      typeName: "Bus LinUS Sosiohumaniora",
+      typeName: "Linus Transit Sosiohumaniora",
       badgeColor: "#8b5cf6", // Purple / Violet
       fare: 0,
       fareFormatted: "Gratis Rp 0 (Tunjukkan KTM)",
       operatingHours: "07.00 - 17.00 WIB",
       headway: "8 - 12 Menit",
-      distanceKm: "3.4 km",
-      estimatedDurationMinutes: 12,
-      stopIds: ["HLT-05", "HLT-06", "HLT-13", "HLT-12", "HLT-14", "HLT-09", "HLT-15", "HLT-02"],
+      distanceKm: "3.3 km",
+      estimatedDurationMinutes: 11,
+      stopIds: [
+        "HLT-01", "HLT-02", "HLT-03", "HLT-04", "HLT-05", "HLT-07", "HLT-08", "HLT-01"
+      ],
       path: [
-        [3.56360, 98.65980], // FKG & Alumni
-        [3.56120, 98.65840], // Pendopo & Perpustakaan
-        [3.55840, 98.66030], // FH & Abdul Hakim
-        [3.55800, 98.65850], // FEB USU
-        [3.55920, 98.65760], // FISIP B
-        [3.55850, 98.65420], // Bioteknologi & Vokasi
-        [3.56080, 98.65370], // Farmasi
-        [3.56380, 98.65150], // Pintu 4 USU
-        [3.56460, 98.65600], // Auditorium & Rektorat
-        [3.56360, 98.65980]  // Kembali ke FKG
+        [3.56733, 98.66008],
+        [3.56645, 98.6602],
+        [3.5658, 98.66018],
+        [3.56465, 98.66022],
+        [3.5638, 98.66024],
+        [3.5628, 98.66026],
+        [3.5615, 98.66028],
+        [3.56, 98.66032],
+        [3.559, 98.66036],
+        [3.5582, 98.6604],
+        [3.5574, 98.66044],
+        [3.5566, 98.66048],
+        [3.5564, 98.66],
+        [3.55642, 98.6588],
+        [3.55645, 98.658],
+        [3.55645, 98.6572],
+        [3.55642, 98.6566],
+        [3.5564, 98.65615],
+        [3.5571, 98.65625],
+        [3.5577, 98.65635],
+        [3.55765, 98.6556],
+        [3.5576, 98.6548],
+        [3.5577, 98.654],
+        [3.5582, 98.65398],
+        [3.55905, 98.65299],
+        [3.56068, 98.65302],
+        [3.56181, 98.65305],
+        [3.56309, 98.65301],
+        [3.5638, 98.65295],
+        [3.5644, 98.65315],
+        [3.5642, 98.6555],
+        [3.5651, 98.6566],
+        [3.5658, 98.66018],
+        [3.56645, 98.6602],
+        [3.56733, 98.66008]
       ]
     },
     {
@@ -283,18 +367,33 @@ const TRANSINFO_DATA = {
       fareFormatted: "Gratis Rp 0 (Zero Emission)",
       operatingHours: "08.00 - 16.00 WIB",
       headway: "8 - 10 Menit",
-      distanceKm: "2.6 km",
-      stopIds: ["HLT-02", "HLT-10", "HLT-06", "HLT-08", "HLT-09", "HLT-11"],
+      distanceKm: "2.4 km",
+      stopIds: ["HLT-05", "HLT-06", "HLT-07", "HLT-08", "HLT-05"],
       path: [
-        [3.56460, 98.65600], // Auditorium USU
-        [3.56280, 98.65620], // Simpang Alumni
-        [3.56168, 98.65634], // FT USU / Magister Sipil
-        [3.56120, 98.65840], // Perpustakaan & Pendopo
-        [3.55920, 98.65760], // Pascasarjana FISIP
-        [3.55850, 98.65420], // Bioteknologi & Vokasi
-        [3.55740, 98.65300], // Kehutanan
-        [3.56080, 98.65370], // Farmasi & Tri Dharma
-        [3.56460, 98.65600]  // Kembali ke Auditorium
+        [3.5577, 98.65635],
+        [3.5582, 98.65615],
+        [3.5586, 98.6559],
+        [3.55906, 98.65588],
+        [3.55906, 98.655],
+        [3.55906, 98.6546],
+        [3.55906, 98.65403],
+        [3.5582, 98.65398],
+        [3.55905, 98.65299],
+        [3.56068, 98.65302],
+        [3.56181, 98.65305],
+        [3.56309, 98.65301],
+        [3.5638, 98.65295],
+        [3.56309, 98.65301],
+        [3.56181, 98.65305],
+        [3.56068, 98.65302],
+        [3.55905, 98.65299],
+        [3.55906, 98.65403],
+        [3.5582, 98.65398],
+        [3.5577, 98.654],
+        [3.5576, 98.6548],
+        [3.55765, 98.6556],
+        [3.5571, 98.65625],
+        [3.5577, 98.65635]
       ]
     }
   ],
@@ -303,36 +402,37 @@ const TRANSINFO_DATA = {
   trafficSegments: [
     {
       id: "TRF-01",
-      roadName: "Jl. Dr. Mansyur (Pintu 1 & Pintu 2 USU)",
+      roadName: "Jl. Dr. Mansyur (Gerbang Utama Pintu 1 USU)",
       status: "congested",
       statusLabel: "Padat Antrean",
       speedKmH: 12,
       color: "#ef4444",
-      description: "Antrean kendaraan jam kuliah dan aktivitas lalu lintas Jl. Dr. Mansyur.",
-      lengthKm: "0.9 km",
+      description: "Antrean masuk kendaraan jam kuliah di Gerbang Pintu 1 Jl. Dr. Mansyur.",
+      lengthKm: "0.8 km",
       delayMinutes: "+8 mnt",
       coords: [
-        [3.56720, 98.65500],
-        [3.56685, 98.65914],
-        [3.56630, 98.66080],
-        [3.56580, 98.66300]
+        [3.56780, 98.65700],
+        [3.56710, 98.65820],
+        [3.56733, 98.66008],
+        [3.56630, 98.66200]
       ]
     },
     {
       id: "TRF-02",
-      roadName: "Jl. Almamater (Depan Magister Teknik Sipil - FT)",
+      roadName: "Jl. Universitas (Pintu 1 - Gelanggang - Pintu Sumber)",
       status: "moderate",
-      statusLabel: "Ramai Lancar",
+      statusLabel: "Ramai Teratur",
       speedKmH: 22,
       color: "#eab308",
-      description: "Aktivitas penyeberangan mahasiswa dan sirkulasi bus LinUS di jalan utama kampus.",
-      lengthKm: "0.8 km",
+      description: "Jalur utama Linus Transit melintas di depan Gelanggang Mahasiswa & FIB menuju Pintu Sumber.",
+      lengthKm: "1.2 km",
       delayMinutes: "+2 mnt",
       coords: [
-        [3.56460, 98.65600],
-        [3.56280, 98.65620],
-        [3.56168, 98.65634],
-        [3.55930, 98.65640]
+        [3.56733, 98.66008],
+        [3.56645, 98.66020],
+        [3.56465, 98.66022],
+        [3.55820, 98.66040],
+        [3.55660, 98.66050]
       ]
     },
     {
@@ -342,120 +442,119 @@ const TRANSINFO_DATA = {
       statusLabel: "Lancar Terkendali",
       speedKmH: 28,
       color: "#22c55e",
-      description: "Kawasan tertib zona hijau pejalan kaki dan lintasan Bus LinUS kampus berjalan lancar.",
+      description: "Zona hijau tertib penyeberangan mahasiswa di depan Auditorium & Biro Rektorat.",
       lengthKm: "0.6 km",
       delayMinutes: "0 mnt",
       coords: [
-        [3.56540, 98.65820],
+        [3.56580, 98.65900],
         [3.56460, 98.65600],
         [3.56380, 98.65380]
       ]
     },
     {
       id: "TRF-04",
-      roadName: "Jl. Tri Dharma (Farmasi - POLMED - Pintu 4)",
-      status: "moderate",
-      statusLabel: "Ramai Lancar",
-      speedKmH: 20,
-      color: "#eab308",
-      description: "Arus lalu lintas mahasiswa POLMED dan Fakultas Farmasi menuju Pintu 4 USU.",
-      lengthKm: "0.9 km",
-      delayMinutes: "+3 mnt",
-      coords: [
-        [3.56380, 98.65150],
-        [3.56380, 98.65380],
-        [3.56080, 98.65370],
-        [3.55850, 98.65420]
-      ]
-    },
-    {
-      id: "TRF-05",
-      roadName: "Jl. Perpustakaan & Pendopo (Gedung Pancasila)",
+      roadName: "Jl. Bioteknologi & Tri Dharma (FMIPA - Vokasi)",
       status: "smooth",
       statusLabel: "Lancar Asri",
       speedKmH: 25,
       color: "#22c55e",
-      description: "Jalur lingkar danau dan perpustakaan rindang teduh dengan sirkulasi tertib.",
+      description: "Sirkulasi kendaraan di klaster sains, laboratorium FMIPA, dan Gedung Vokasi.",
       lengthKm: "0.7 km",
       delayMinutes: "0 mnt",
       coords: [
-        [3.56360, 98.65980],
-        [3.56120, 98.65840],
-        [3.55920, 98.65760],
-        [3.55800, 98.65850]
+        [3.56180, 98.65500],
+        [3.55906, 98.65460],
+        [3.55820, 98.65398]
+      ]
+    },
+    {
+      id: "TRF-05",
+      roadName: "Jl. Prof. Hanafiah & Dr. A. Sofian (FEB - FISIP)",
+      status: "smooth",
+      statusLabel: "Lancar Asri",
+      speedKmH: 26,
+      color: "#22c55e",
+      description: "Kawasan rindang depan Fakultas Ekonomi dan Bisnis (FEB) & FISIP USU.",
+      lengthKm: "0.7 km",
+      delayMinutes: "0 mnt",
+      coords: [
+        [3.55838, 98.65612],
+        [3.55770, 98.65635],
+        [3.55640, 98.65611],
+        [3.55645, 98.65720]
       ]
     },
     {
       id: "TRF-06",
-      roadName: "Jl. Bioteknologi (Klaster Vokasi & Pertanian)",
+      roadName: "Jl. Almamater (Pusat Fakultas Teknik - GKB)",
       status: "smooth",
       statusLabel: "Bebas Hambatan",
-      speedKmH: 30,
+      speedKmH: 28,
       color: "#22c55e",
-      description: "Kawasan riset kampus, pepohonan rindang dengan sirkulasi kendaraan sangat teratur.",
-      lengthKm: "0.8 km",
+      description: "Jalur sirkulasi internal Fakultas Teknik dan Gedung Kuliah Bersama.",
+      lengthKm: "0.6 km",
       delayMinutes: "0 mnt",
       coords: [
-        [3.55850, 98.65420],
-        [3.55930, 98.65640],
-        [3.55800, 98.65850]
+        [3.56460, 98.65600],
+        [3.56180, 98.65500],
+        [3.55950, 98.65600]
       ]
     }
   ],
 
-  // Simulasi Posisi Armada Bus LinUS & E-Shuttle Real-Time di Kampus USU
+  // Simulasi Posisi Armada Linus Transit & E-Shuttle Real-Time di Kampus USU
   liveVehicles: [
     {
       id: "BUS-LIN01",
       routeId: "LIN-01",
-      label: "LinUS-01 (Isuzu ELF Biru USU)",
+      label: "Linus Transit-01 (Isuzu ELF Biru USU)",
       type: "bus",
       speed: "24 km/h",
       status: "Aktif Melayani",
       occupancy: "65% (Tersedia Kursi)",
-      nextStop: "Halte Auditorium & Biro Rektor",
+      nextStop: "Halte Linus Transit Gelanggang Mahasiswa",
       etaToNext: 2,
-      currentCoordIndex: 2,
-      currentCoord: [3.56460, 98.65600]
+      currentCoordIndex: 1,
+      currentCoord: [3.56645, 98.66020]
     },
     {
       id: "BUS-LIN02",
       routeId: "LIN-01",
-      label: "LinUS-02 (Hino Dutro Kuning Emas)",
+      label: "Linus Transit-02 (Hino Dutro Kuning Emas)",
       type: "bus",
       speed: "20 km/h",
       status: "Aktif Melayani",
       occupancy: "80% (Sisa 4 Kursi)",
-      nextStop: "Halte Fakultas Teknik (FT USU)",
+      nextStop: "Halte FISIP USU",
       etaToNext: 3,
-      currentCoordIndex: 7,
-      currentCoord: [3.56168, 98.65634]
+      currentCoordIndex: 8,
+      currentCoord: [3.55645, 98.65720]
     },
     {
       id: "BUS-LIN03",
       routeId: "LIN-02",
-      label: "LinUS-03 (Klaster Sains Hijau)",
+      label: "Linus Transit-03 (Klaster Sains Hijau)",
       type: "bus",
       speed: "18 km/h",
       status: "Aktif Melayani",
       occupancy: "50% (Banyak Kursi Kosong)",
-      nextStop: "Halte Fakultas Farmasi & Fasilkom",
+      nextStop: "Halte Linus Transit Pintu 4",
       etaToNext: 2,
       currentCoordIndex: 5,
-      currentCoord: [3.56080, 98.65370]
+      currentCoord: [3.56380, 98.65295]
     },
     {
       id: "BUS-LIN04",
       routeId: "LIN-03",
-      label: "LinUS-04 (Klaster Sosiohumaniora Ungu)",
+      label: "Linus Transit-04 (Klaster Sosiohumaniora Ungu)",
       type: "bus",
       speed: "25 km/h",
       status: "Aktif Melayani",
       occupancy: "70%",
-      nextStop: "Halte FEB & Gedung B FISIP",
+      nextStop: "Halte Hukum & FIB USU",
       etaToNext: 1,
-      currentCoordIndex: 3,
-      currentCoord: [3.55800, 98.65850]
+      currentCoordIndex: 2,
+      currentCoord: [3.55820, 98.66040]
     },
     {
       id: "EV-SHUTTLE01",
@@ -465,10 +564,10 @@ const TRANSINFO_DATA = {
       speed: "16 km/h",
       status: "Eco Shuttle Aktif",
       occupancy: "60% (Kapasitas 10 Org)",
-      nextStop: "Halte Perpustakaan & Pendopo",
+      nextStop: "Halte FMIPA USU",
       etaToNext: 3,
-      currentCoordIndex: 3,
-      currentCoord: [3.56120, 98.65840]
+      currentCoordIndex: 7,
+      currentCoord: [3.55906, 98.65460]
     }
   ],
 
@@ -477,13 +576,19 @@ const TRANSINFO_DATA = {
     {
       type: "info",
       tag: "GRATIS CIVITAS",
-      text: "Layanan Bus LinUS (Lintas USU) gratis 100% untuk mahasiswa & dosen dengan menunjukkan KTM aktif.",
+      text: "Layanan Linus Transit gratis 100% untuk mahasiswa & dosen dengan menunjukkan KTM aktif.",
       time: "Baru saja"
+    },
+    {
+      type: "info",
+      tag: "RUTE AKTIF",
+      text: "Operasional Linus Transit berpusat pada 8 halte berurutan (1. Pintu 1, 2. Gelanggang, 3. Hukum & FIB, 4. FISIP, 5. FEB, 6. FMIPA, 7. Vokasi, 8. Pintu 4).",
+      time: "3 menit lalu"
     },
     {
       type: "warning",
       tag: "INFO GERBANG",
-      text: "Pintu 1 Jl. Dr. Mansyur terpantau padat antrean. Mahasiswa disarankan menggunakan akses Pintu 4 atau Pintu 2.",
+      text: "Pintu 1 Jl. Dr. Mansyur terpantau padat antrean mahasiswa jam masuk kuliah.",
       time: "8 menit lalu"
     },
     {
@@ -495,7 +600,7 @@ const TRANSINFO_DATA = {
     {
       type: "info",
       tag: "GREEN CAMPUS",
-      text: "E-Shuttle Listrik beroperasi di rute Auditorium - Perpustakaan - Farmasi - Fakultas Teknik.",
+      text: "E-Shuttle Listrik beroperasi di rute Pintu 4 - FMIPA - Vokasi - FEB.",
       time: "25 menit lalu"
     }
   ]
@@ -516,10 +621,10 @@ function getUpcomingDeparturesForStop(stopId) {
     const eta3 = eta2 + 8;
 
     let destName = "Putaran Kampus USU";
-    if (route.id === "LIN-01") destName = "Pintu 1 & Auditorium USU";
-    else if (route.id === "LIN-02") destName = "RS USU & Klaster Sains";
-    else if (route.id === "LIN-03") destName = "FEB & Pendopo Pancasila";
-    else if (route.id === "EV-USU") destName = "Perpustakaan - Fak. Teknik";
+    if (route.id === "LIN-01") destName = "Halte Linus Transit Pintu 1 & Pintu 4";
+    else if (route.id === "LIN-02") destName = "Halte Linus Transit Pintu 4 & Vokasi";
+    else if (route.id === "LIN-03") destName = "Halte FISIP & Halte Hukum & FIB";
+    else if (route.id === "EV-USU") destName = "Halte Linus Transit Pintu 4 - FMIPA";
 
     departures.push({
       routeCode: route.code,

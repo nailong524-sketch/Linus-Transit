@@ -1,9 +1,9 @@
 /**
- * LinUS USU - Service Worker v2 (Network-First Online Priority)
+ * Linus Transit - Service Worker v2 (Network-First Online Priority)
  * Mengutamakan koneksi online aktif dengan data armada bus kampus real-time
  */
 
-const CACHE_NAME = 'linus-usu-v2';
+const CACHE_NAME = 'linus-transit-v1';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

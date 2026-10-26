@@ -1,7 +1,7 @@
 {
-  "name": "LinUS - Bus Kampus Universitas Sumatera Utara",
-  "short_name": "LinUS USU",
-  "description": "Sistem Informasi & Peta Rute Bus Kampus Universitas Sumatera Utara (USU) Padang Bulan Medan",
+  "name": "Linus Transit - Bus Kampus Universitas Sumatera Utara",
+  "short_name": "Linus Transit",
+  "description": "Sistem Informasi & Peta Rute Linus Transit Bus Kampus Universitas Sumatera Utara (USU) Padang Bulan Medan",
   "start_url": "./index.html",
   "id": "./index.html",
   "scope": "./",

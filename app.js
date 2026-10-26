@@ -1,5 +1,5 @@
 /**
- * LinUS - Core Logic & Map Controller
+ * Linus Transit - Core Logic & Map Controller
  * Sistem Navigasi & Bus Kampus Universitas Sumatera Utara (USU), Padang Bulan Medan
  * Menghubungkan Leaflet Map, Interaksi UI, Simulasi Bus GPS, dan Pencari Rute Kampus
  */
@@ -16,11 +16,13 @@ let stopsLayerGroup;
 let routesLayerGroup;
 let vehiclesLayerGroup;
 let activeRoutePolyline = null;
-let currentOriginId = "HLT-01"; // Pintu 1 USU
-let currentDestId = "HLT-10";   // Fakultas Teknik (FT USU / Jl. Almamater)
+let currentOriginId = "HLT-01"; // Halte 1: Pintu 1 USU
+let currentDestId = "HLT-08";   // Halte 8 (HLT-08): Pintu 4 USU
 let activeModeFilter = "all";
 let isTrafficVisible = true;
 let isStopsVisible = true;
+let isStopLabelsVisible = true;
+let stopMarkersMap = {};
 let isRoutesVisible = true;
 let isVehiclesVisible = true;
 
@@ -32,9 +34,10 @@ document.addEventListener("DOMContentLoaded", () => {
   populateDropdowns();
   renderTrafficPanel();
   renderUpcomingDepartures("HLT-01");
+  renderHalteDirectory();
   setupEventListeners();
   startVehicleSimulation();
-  
+
   // Jalankan pencarian rute default awal (Pintu 1 -> Fakultas Teknik)
   calculateRoute();
 });
@@ -130,7 +133,7 @@ function toggleBaseMapLayer() {
 }
 
 // -------------------------------------------------------------
-// 3. Render Garis Lintasan Seluruh Koridor Bus LinUS
+// 3. Render Garis Lintasan Seluruh Koridor Linus Transit
 // -------------------------------------------------------------
 function renderAllRoutesPolylines() {
   routesLayerGroup.clearLayers();
@@ -223,10 +226,11 @@ function renderTrafficPolylines() {
 }
 
 // -------------------------------------------------------------
-// 5. Render Marker Halte / Zona Bus USU
+// 5. Render Marker Halte / Zona Bus USU (Gaya Google Maps Berlabel Jelas)
 // -------------------------------------------------------------
 function renderStopMarkers() {
   stopsLayerGroup.clearLayers();
+  stopMarkersMap = {};
 
   TRANSINFO_DATA.stops.forEach(stop => {
     // Filter moda/koridor jika dipilih
@@ -238,48 +242,50 @@ function renderStopMarkers() {
       if (!modeMatch) return;
     }
 
-    // Tentukan icon spesifik berdasarkan jenis lokasi kampus
+    // Tentukan icon spesifik & warna pin berdasarkan jenis lokasi kampus USU
     let iconClass = "fa-bus";
-    let markerColorClass = "stop-marker-bus";
+    let pinColorClass = "pin-blue";
 
-    if (stop.id === "HLT-02") {
-      iconClass = "fa-building-columns"; // Auditorium & Biro Rektor
-      markerColorClass = "stop-marker-rektorat";
+    if (stop.id === "HLT-01") {
+      iconClass = "fa-archway"; // 1. Pintu 1 Mansyur
+      pinColorClass = "pin-blue";
+    } else if (stop.id === "HLT-02") {
+      iconClass = "fa-person-running"; // 2. Halte Gelanggang Mahasiswa
+      pinColorClass = "pin-amber";
     } else if (stop.id === "HLT-03") {
-      iconClass = "fa-hospital"; // RS USU
-      markerColorClass = "stop-marker-hospital";
+      iconClass = "fa-scale-balanced"; // 3. Halte Hukum & FIB USU
+      pinColorClass = "pin-violet";
+    } else if (stop.id === "HLT-04") {
+      iconClass = "fa-landmark-dome"; // 4. Halte FISIP USU
+      pinColorClass = "pin-violet";
+    } else if (stop.id === "HLT-05") {
+      iconClass = "fa-chart-pie"; // 5. FEB USU
+      pinColorClass = "pin-amber";
     } else if (stop.id === "HLT-06") {
-      iconClass = "fa-book-open"; // Perpustakaan & Pendopo
-      markerColorClass = "stop-marker-library";
+      iconClass = "fa-atom"; // 6. FMIPA USU
+      pinColorClass = "pin-cyan";
     } else if (stop.id === "HLT-07") {
-      iconClass = "fa-graduation-cap"; // POLMED
-      markerColorClass = "stop-marker-sports";
+      iconClass = "fa-dna"; // 7. Fak. Vokasi & Bioteknologi
+      pinColorClass = "pin-emerald";
     } else if (stop.id === "HLT-08") {
-      iconClass = "fa-capsules"; // Farmasi
-      markerColorClass = "stop-marker-tech";
-    } else if (stop.id === "HLT-10") {
-      iconClass = "fa-gear"; // Fakultas Teknik / Magister Sipil
-      markerColorClass = "stop-marker-eng";
-    } else if (stop.id === "HLT-12") {
-      iconClass = "fa-chart-pie"; // FEB
-      markerColorClass = "stop-marker-bus";
-    } else if (stop.id === "HLT-13") {
-      iconClass = "fa-scale-balanced"; // Hukum
-      markerColorClass = "stop-marker-gate";
-    } else if (stop.id === "HLT-01" || stop.id === "HLT-05" || stop.id === "HLT-15") {
-      iconClass = "fa-archway"; // Gerbang Masuk
-      markerColorClass = "stop-marker-gate";
+      iconClass = "fa-door-open"; // 8. Halte Linus Transit Pintu 4
+      pinColorClass = "pin-amber";
     }
 
+    const labelHtml = isStopLabelsVisible ? `<div class="gmaps-stop-label-pill">${stop.name}</div>` : "";
+
     const customIcon = L.divIcon({
-      className: "custom-stop-marker-wrapper",
+      className: "gmaps-stop-icon-wrapper",
       html: `
-        <div class="custom-stop-marker ${markerColorClass}" style="width:30px; height:30px;">
-          <i class="fa-solid ${iconClass}"></i>
+        <div class="gmaps-stop-container">
+          <div class="gmaps-stop-pin ${pinColorClass}">
+            <i class="fa-solid ${iconClass}"></i>
+          </div>
+          ${labelHtml}
         </div>
       `,
-      iconSize: [30, 30],
-      iconAnchor: [15, 15],
+      iconSize: [120, 50],
+      iconAnchor: [60, 14],
       popupAnchor: [0, -18]
     });
 
@@ -291,18 +297,21 @@ function renderStopMarkers() {
       return r ? `<span style="background:${r.badgeColor}; color:#fff; font-size:0.65rem; font-weight:700; padding:2px 7px; border-radius:4px; margin-right:4px;">${r.code}</span>` : "";
     }).join("");
 
-    const facilitiesHtml = stop.facilities.map(f => 
+    const facilitiesHtml = stop.facilities.map(f =>
       `<span style="font-size:0.7rem; background:rgba(255,255,255,0.08); padding:2px 6px; border-radius:4px; margin-right:4px; display:inline-block; margin-top:3px;"><i class="fa-solid fa-check" style="color:#10b981;"></i> ${f}</span>`
     ).join("");
 
+    const gmapsSearchUrl = `https://www.google.com/maps/search/?api=1&query=${stop.lat},${stop.lng}`;
+
     const popupContent = `
       <div class="popup-inner">
+        <div class="gmaps-verified-badge"><i class="fa-solid fa-circle-check"></i> Halte Terverifikasi Google Maps</div>
         <div style="font-size:0.72rem; color:#10b981; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">${stop.modeLabel}</div>
         <div class="popup-title" style="margin-top:2px;">${stop.name}</div>
         <div class="popup-subtitle"><i class="fa-solid fa-location-dot" style="color:#0284c7;"></i> ${stop.address}</div>
         
         <div style="margin: 8px 0 6px 0;">
-          <div style="font-size:0.7rem; color:#94a3b8; margin-bottom:4px; font-weight:600;">Koridor Bus LinUS Melintas:</div>
+          <div style="font-size:0.7rem; color:#94a3b8; margin-bottom:4px; font-weight:600;">Koridor Linus Transit Melintas:</div>
           <div>${linesBadges}</div>
         </div>
 
@@ -311,7 +320,7 @@ function renderStopMarkers() {
           <div>${facilitiesHtml}</div>
         </div>
 
-        <div class="popup-actions">
+        <div class="popup-actions" style="flex-wrap: wrap;">
           <button class="popup-btn popup-btn-primary" onclick="selectStopAs('${stop.id}', 'origin')">
             <i class="fa-solid fa-location-arrow"></i> Set Asal
           </button>
@@ -319,19 +328,89 @@ function renderStopMarkers() {
             <i class="fa-solid fa-flag-checkered"></i> Set Tujuan
           </button>
           <button class="popup-btn popup-btn-outline" onclick="openScheduleTabForStop('${stop.id}')">
-            <i class="fa-regular fa-clock"></i> Jadwal Bus
+            <i class="fa-regular fa-clock"></i> Jadwal
           </button>
+          <a href="${gmapsSearchUrl}" target="_blank" rel="noopener noreferrer" class="popup-btn popup-btn-gmaps">
+            <i class="fa-brands fa-google"></i> Google Maps
+          </a>
         </div>
       </div>
     `;
 
     marker.bindPopup(popupContent);
     marker.addTo(stopsLayerGroup);
+    stopMarkersMap[stop.id] = marker;
   });
 }
 
+// Sorot ke Halte dan buka popup
+function focusOnStop(stopId) {
+  const stop = TRANSINFO_DATA.stops.find(s => s.id === stopId);
+  if (!stop) return;
+  map.flyTo([stop.lat, stop.lng], 18, { duration: 1.2 });
+  const marker = stopMarkersMap[stopId];
+  if (marker) {
+    setTimeout(() => {
+      marker.openPopup();
+    }, 1250);
+  }
+}
+
+// Render Direktori Halte di Tab Sidebar
+function renderHalteDirectory(filterQuery = "") {
+  const container = document.getElementById("halte-directory-list");
+  if (!container) return;
+
+  const query = (filterQuery || "").toLowerCase().trim();
+  const filteredStops = TRANSINFO_DATA.stops.filter(s =>
+    s.name.toLowerCase().includes(query) ||
+    s.address.toLowerCase().includes(query) ||
+    s.modeLabel.toLowerCase().includes(query) ||
+    s.facilities.some(f => f.toLowerCase().includes(query))
+  );
+
+  if (filteredStops.length === 0) {
+    container.innerHTML = `
+      <div style="text-align:center; padding:24px 10px; color:var(--text-muted); font-size:0.85rem;">
+        <i class="fa-solid fa-magnifying-glass" style="font-size:1.6rem; margin-bottom:8px; opacity:0.5; color:#38bdf8;"></i>
+        <div>Tidak ada halte yang cocok dengan "<b>${filterQuery}</b>"</div>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = filteredStops.map(stop => {
+    const linesHtml = stop.lines.map(lineId => {
+      const r = TRANSINFO_DATA.routes.find(route => route.id === lineId);
+      return r ? `<span style="background:${r.badgeColor}; color:#fff; font-size:0.65rem; font-weight:700; padding:2px 6px; border-radius:4px; margin-right:4px;">${r.code}</span>` : "";
+    }).join("");
+
+    return `
+      <div class="halte-card" onclick="focusOnStop('${stop.id}')">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div style="flex:1; padding-right:8px;">
+            <div class="gmaps-verified-badge"><i class="fa-solid fa-circle-check"></i> Google Maps</div>
+            <div style="font-weight:700; font-size:0.88rem; color:#fff; margin-top:3px;">${stop.name}</div>
+            <div style="font-size:0.75rem; color:#94a3b8; margin-top:2px; line-height:1.4;"><i class="fa-solid fa-location-dot" style="color:#0284c7;"></i> ${stop.address}</div>
+          </div>
+          <button class="halte-fly-btn" title="Sorot di Peta" onclick="event.stopPropagation(); focusOnStop('${stop.id}')">
+            <i class="fa-solid fa-location-crosshairs"></i>
+          </button>
+        </div>
+        <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid rgba(255,255,255,0.06); padding-top:8px;">
+          <div>${linesHtml}</div>
+          <div style="display:flex; gap:6px;">
+            <button class="halte-action-chip" onclick="event.stopPropagation(); selectStopAs('${stop.id}', 'origin')">Set Asal</button>
+            <button class="halte-action-chip" style="background:rgba(5, 150, 105, 0.2); border-color:#059669; color:#34d399;" onclick="event.stopPropagation(); selectStopAs('${stop.id}', 'dest')">Set Tujuan</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
 // -------------------------------------------------------------
-// 6. Render & Simulasi Armada Bus LinUS Bergerak Real-Time
+// 6. Render & Simulasi Armada Linus Transit Bergerak Real-Time
 // -------------------------------------------------------------
 function renderLiveVehicles() {
   vehiclesLayerGroup.clearLayers();
@@ -384,7 +463,7 @@ function renderLiveVehicles() {
           </div>
         </div>
         <div style="font-size:0.7rem; color:#94a3b8; font-style:italic;">
-          * Bus LinUS USU gratis untuk seluruh civitas akademika.
+          * Layanan Linus Transit gratis untuk seluruh civitas akademika.
         </div>
       </div>
     `;
@@ -421,13 +500,56 @@ function startVehicleSimulation() {
   }, 4000);
 }
 
+// Helper: Potong jalur jalan nyata antara dua titik halte agar garis rute mengikuti jalan kampus
+function extractPathBetweenStops(route, startStop, endStop) {
+  if (!route || !route.path || route.path.length < 2) {
+    return [[startStop.lat, startStop.lng], [endStop.lat, endStop.lng]];
+  }
+
+  function getDist(c1, c2) {
+    return Math.hypot(c1[0] - c2[0], c1[1] - c2[1]);
+  }
+
+  let minIdxStart = 0, minDistStart = Infinity;
+  let minIdxEnd = 0, minDistEnd = Infinity;
+
+  route.path.forEach((pt, i) => {
+    const dStart = getDist(pt, [startStop.lat, startStop.lng]);
+    if (dStart < minDistStart) {
+      minDistStart = dStart;
+      minIdxStart = i;
+    }
+    const dEnd = getDist(pt, [endStop.lat, endStop.lng]);
+    if (dEnd < minDistEnd) {
+      minDistEnd = dEnd;
+      minIdxEnd = i;
+    }
+  });
+
+  let sliced = [];
+  if (minIdxStart <= minIdxEnd) {
+    sliced = route.path.slice(minIdxStart, minIdxEnd + 1);
+  } else {
+    // Rute loop maju dari minIdxStart ke ujung lalu dari awal ke minIdxEnd
+    const forwardLoop = route.path.slice(minIdxStart).concat(route.path.slice(0, minIdxEnd + 1));
+    const reverseLoop = route.path.slice(minIdxEnd, minIdxStart + 1).reverse();
+    sliced = (forwardLoop.length > 0 && forwardLoop.length <= reverseLoop.length) ? forwardLoop : reverseLoop;
+  }
+
+  if (sliced.length < 2) {
+    return [[startStop.lat, startStop.lng], [endStop.lat, endStop.lng]];
+  }
+
+  return sliced;
+}
+
 // -------------------------------------------------------------
 // 7. Algoritma Pencari & Rekomendasi Rute Perjalanan Kampus
 // -------------------------------------------------------------
 function calculateRoute() {
   const originSelect = document.getElementById("select-origin");
   const destSelect = document.getElementById("select-dest");
-  
+
   if (!originSelect || !destSelect) return;
 
   const originId = originSelect.value;
@@ -446,8 +568,8 @@ function calculateRoute() {
   if (!resultsContainer) return;
   resultsContainer.innerHTML = "";
 
-  // 1. Cari apakah ada rute langsung (Direct Bus LinUS)
-  const directRoutes = TRANSINFO_DATA.routes.filter(r => 
+  // 1. Cari apakah ada rute langsung (Direct Linus Transit)
+  const directRoutes = TRANSINFO_DATA.routes.filter(r =>
     r.stopIds.includes(originId) && r.stopIds.includes(destId)
   );
 
@@ -487,10 +609,7 @@ function calculateRoute() {
             desc: `Turun dengan tertib dan lanjutkan berjalan kaki ke gedung tujuan.`
           }
         ],
-        pathCoords: [
-          [originStop.lat, originStop.lng],
-          [destStop.lat, destStop.lng]
-        ],
+        pathCoords: extractPathBetweenStops(route, originStop, destStop),
         routeObj: route
       });
     });
@@ -498,14 +617,17 @@ function calculateRoute() {
 
   // 2. Jika perlu alternatif via Hub Auditorium & Biro Rektor
   if (recommendations.length === 0 || directRoutes.length === 1) {
-    const hubStop = TRANSINFO_DATA.stops.find(s => s.id === "HLT-02") || TRANSINFO_DATA.stops[1]; // Auditorium
+    const hubStop = TRANSINFO_DATA.stops.find(s => s.id === "HLT-02") || TRANSINFO_DATA.stops[0]; // Gelanggang
     const route1 = TRANSINFO_DATA.routes.find(r => r.stopIds.includes(originId)) || TRANSINFO_DATA.routes[0];
     const route2 = TRANSINFO_DATA.routes.find(r => r.stopIds.includes(destId)) || TRANSINFO_DATA.routes[1];
 
+    const leg1 = extractPathBetweenStops(route1, originStop, hubStop);
+    const leg2 = extractPathBetweenStops(route2, hubStop, destStop);
+
     recommendations.push({
       id: "rec-transfer-hub",
-      title: "Rute Transit Terpadu: Transit di Halte Auditorium USU",
-      mode: "Kombinasi Koridor LinUS",
+      title: "Rute Transit Terpadu: Transit di Halte Gelanggang Mahasiswa",
+      mode: "Kombinasi Koridor Linus Transit",
       badgeColor: "#10b981",
       isDirect: false,
       fare: "Gratis Rp 0 (KTM USU)",
@@ -516,11 +638,11 @@ function calculateRoute() {
         {
           type: "origin",
           title: `Berangkat dari ${originStop.name}`,
-          desc: `Naik bus ${route1.code} menuju arah Auditorium & Rektorat.`
+          desc: `Naik bus ${route1.code} menuju arah Gelanggang Mahasiswa.`
         },
         {
           type: "transit",
-          title: "Transit di Halte Auditorium & Biro Rektor USU",
+          title: "Transit di Halte Gelanggang Mahasiswa",
           desc: `Pindah ke koridor bus penghubung ${route2.code} (Waktu tunggu est. 3-4 menit).`
         },
         {
@@ -529,11 +651,7 @@ function calculateRoute() {
           desc: `Sampai di tujuan akhir perjalanan kampus.`
         }
       ],
-      pathCoords: [
-        [originStop.lat, originStop.lng],
-        [hubStop.lat, hubStop.lng],
-        [destStop.lat, destStop.lng]
-      ],
+      pathCoords: [...leg1, ...leg2],
       routeObj: route1
     });
   }
@@ -592,10 +710,7 @@ function highlightRouteOnMap(rec) {
     map.removeLayer(activeRoutePolyline);
   }
 
-  let coordsToDraw = rec.pathCoords;
-  if (rec.routeObj && rec.routeObj.path) {
-    coordsToDraw = rec.routeObj.path;
-  }
+  let coordsToDraw = (rec.pathCoords && rec.pathCoords.length >= 2) ? rec.pathCoords : (rec.routeObj ? rec.routeObj.path : []);
 
   activeRoutePolyline = L.polyline(coordsToDraw, {
     color: "#38bdf8",
@@ -701,36 +816,36 @@ function populateDropdowns() {
   destSelect.innerHTML = "";
   scheduleStopSelect.innerHTML = "";
 
-  TRANSINFO_DATA.stops.forEach((stop) => {
-    const optOrigin = new Option(`${stop.name}`, stop.id);
-    const optDest = new Option(`${stop.name}`, stop.id);
-    const optSchedule = new Option(`${stop.name}`, stop.id);
+  TRANSINFO_DATA.stops.forEach((stop, idx) => {
+    const optLabel = `${idx + 1}. ${stop.name}`;
+    const optOrigin = new Option(optLabel, stop.id);
+    const optDest = new Option(optLabel, stop.id);
+    const optSchedule = new Option(optLabel, stop.id);
 
     originSelect.add(optOrigin);
     destSelect.add(optDest);
     scheduleStopSelect.add(optSchedule);
   });
 
-  // Default: Pintu 1 Mansyur ke Fakultas Teknik (Magister Sipil / Jl. Almamater)
-  originSelect.value = "HLT-01"; // Pintu 1
-  destSelect.value = "HLT-10";   // Fakultas Teknik
+  // Default: Halte 1 (Pintu 1) ke Halte 8 (Pintu 4)
+  originSelect.value = "HLT-01"; // 1. Halte Linus Transit Pintu 1
+  destSelect.value = "HLT-08";   // 8. Halte Linus Transit Pintu 4
   scheduleStopSelect.value = "HLT-01";
 }
 
 // -------------------------------------------------------------
-// 12. Quick Fly-To Landmark Kampus USU (Sesuai Peta Referensi)
+// 12. Quick Fly-To Landmark Kampus USU (Sesuai Halte Google Maps)
 // -------------------------------------------------------------
 function flyToCampusLandmark(landmarkKey) {
   const landmarks = {
-    rektorat: { coord: [3.56460, 98.65600], zoom: 17.5, name: "Auditorium & Biro Rektor USU" },
-    teknik: { coord: [3.56168, 98.65634], zoom: 18, name: "Fakultas Teknik (FT USU / Jl. Almamater)" },
-    rsusu: { coord: [3.56580, 98.65180], zoom: 17, name: "Rumah Sakit USU (RS USU)" },
-    perpus: { coord: [3.56120, 98.65840], zoom: 17.5, name: "Perpustakaan Pusat & Pendopo (Gedung Pancasila)" },
-    pintu1: { coord: [3.56685, 98.65914], zoom: 17, name: "Pintu 1 USU (Jl. Dr. Mansyur)" },
-    feb: { coord: [3.55800, 98.65850], zoom: 17.5, name: "Fakultas Ekonomi dan Bisnis (FEB USU)" },
-    fasilkom: { coord: [3.56080, 98.65370], zoom: 17.5, name: "Fakultas Farmasi & Tri Dharma" },
-    polmed: { coord: [3.56380, 98.65380], zoom: 17.5, name: "POLMED (Politeknik Negeri Medan)" },
-    pintu4: { coord: [3.56380, 98.65150], zoom: 17, name: "Pintu 4 USU (Akses Pajus & Jamin Ginting)" },
+    pintu1: { coord: [3.56645, 98.66020], zoom: 18, stopId: "HLT-01", name: "1. Halte Linus Transit Pintu 1" },
+    gelanggang: { coord: [3.56465, 98.66022], zoom: 18, stopId: "HLT-02", name: "2. Halte Linus Transit Gelanggang Mahasiswa" },
+    hukum: { coord: [3.55820, 98.66040], zoom: 18, stopId: "HLT-03", name: "3. Halte Hukum & FIB USU" },
+    fisip: { coord: [3.55645, 98.65720], zoom: 18, stopId: "HLT-04", name: "4. Halte FISIP USU" },
+    feb: { coord: [3.55770, 98.65635], zoom: 18, stopId: "HLT-05", name: "5. Fakultas Ekonomi & Bisnis (FEB USU)" },
+    fmipa: { coord: [3.55906, 98.65460], zoom: 18, stopId: "HLT-06", name: "6. Fakultas MIPA USU (Jl. Bioteknologi)" },
+    vokasi: { coord: [3.55820, 98.65398], zoom: 18, stopId: "HLT-07", name: "7. Fakultas Vokasi & Bioteknologi" },
+    pintu4: { coord: [3.56380, 98.65295], zoom: 18, stopId: "HLT-08", name: "8. Halte Linus Transit Pintu 4" },
     pusat: { coord: [3.561676, 98.6563423], zoom: 16.5, name: "Pusat Kampus USU Padang Bulan" }
   };
 
@@ -738,6 +853,11 @@ function flyToCampusLandmark(landmarkKey) {
   if (!item) return;
 
   map.flyTo(item.coord, item.zoom, { duration: 1.2 });
+  if (item.stopId && stopMarkersMap[item.stopId]) {
+    setTimeout(() => {
+      stopMarkersMap[item.stopId].openPopup();
+    }, 1250);
+  }
 }
 
 // -------------------------------------------------------------
@@ -834,7 +954,25 @@ function setupEventListeners() {
     });
   }
 
-  // Toggle Layer Rute LinUS
+  // Toggle Label Nama Halte (Google Maps Style)
+  const btnToggleLabels = document.getElementById("tool-toggle-labels");
+  if (btnToggleLabels) {
+    btnToggleLabels.addEventListener("click", () => {
+      isStopLabelsVisible = !isStopLabelsVisible;
+      btnToggleLabels.classList.toggle("active", isStopLabelsVisible);
+      renderStopMarkers();
+    });
+  }
+
+  // Search input direktori halte
+  const inputSearchHalte = document.getElementById("input-search-halte");
+  if (inputSearchHalte) {
+    inputSearchHalte.addEventListener("input", (e) => {
+      renderHalteDirectory(e.target.value);
+    });
+  }
+
+  // Toggle Layer Rute Linus Transit
   const btnToggleRoutes = document.getElementById("tool-toggle-routes");
   if (btnToggleRoutes) {
     btnToggleRoutes.addEventListener("click", () => {
@@ -1014,7 +1152,7 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').then(
       (reg) => {
-        console.log('LinUS PWA Service Worker aktif:', reg.scope);
+        console.log('Linus Transit PWA Service Worker aktif:', reg.scope);
         // Periksa pembaruan service worker secara proaktif
         reg.update();
       },
@@ -1113,7 +1251,7 @@ if (modalInstallGuide) {
 
 // Deteksi saat aplikasi berhasil terinstal di layar HP
 window.addEventListener("appinstalled", () => {
-  console.log("LinUS USU berhasil diinstal ke Home Screen!");
+  console.log("Linus Transit berhasil diinstal ke Home Screen!");
   if (pwaInstallBanner) pwaInstallBanner.classList.remove("visible");
   closePwaGuideModal();
 });
@@ -1133,6 +1271,9 @@ window.addEventListener("load", () => {
 // 14. Helper Fungsi Terbuka untuk Popup & Komponen
 // -------------------------------------------------------------
 function selectStopAs(stopId, role) {
+  const plannerTabBtn = document.querySelector('[data-tab="pane-planner"]');
+  if (plannerTabBtn) plannerTabBtn.click();
+
   if (role === "origin") {
     document.getElementById("select-origin").value = stopId;
   } else {
