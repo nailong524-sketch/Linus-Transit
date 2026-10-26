@@ -258,7 +258,7 @@ const TRANSINFO_DATA = {
       name: "Linus Transit Koridor 2 (Klaster Sains & Teknologi)",
       type: "bus",
       typeName: "Linus Transit Sains & Teknologi",
-      badgeColor: "#10b981", // Emerald green
+      badgeColor: "#0284c7", // Linus Transit Blue
       fare: 0,
       fareFormatted: "Gratis Rp 0 (Tunjukkan KTM)",
       operatingHours: "07.00 - 17.00 WIB",
@@ -308,7 +308,7 @@ const TRANSINFO_DATA = {
       name: "Linus Transit Koridor 3 (Klaster Sosio-Humaniora)",
       type: "bus",
       typeName: "Linus Transit Sosiohumaniora",
-      badgeColor: "#8b5cf6", // Purple / Violet
+      badgeColor: "#0284c7", // Linus Transit Blue
       fare: 0,
       fareFormatted: "Gratis Rp 0 (Tunjukkan KTM)",
       operatingHours: "07.00 - 17.00 WIB",

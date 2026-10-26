@@ -3,7 +3,7 @@
  * Mengutamakan koneksi online aktif dengan data armada bus kampus real-time
  */
 
-const CACHE_NAME = 'linus-transit-v1';
+const CACHE_NAME = 'linus-transit-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

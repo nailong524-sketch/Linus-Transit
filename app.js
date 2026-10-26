@@ -102,7 +102,7 @@ function initMap() {
 
   // Inisialisasi Layer Groups
   routesLayerGroup = L.layerGroup().addTo(map);
-  trafficLayerGroup = L.layerGroup().addTo(map);
+  trafficLayerGroup = L.layerGroup();
   stopsLayerGroup = L.layerGroup().addTo(map);
   vehiclesLayerGroup = L.layerGroup().addTo(map);
 
@@ -138,13 +138,12 @@ function toggleBaseMapLayer() {
 function renderAllRoutesPolylines() {
   routesLayerGroup.clearLayers();
 
-  TRANSINFO_DATA.routes.forEach(route => {
-    // Cek jika filter aktif
-    if (activeModeFilter !== "all") {
-      const match = route.id === activeModeFilter || route.type === activeModeFilter;
-      if (!match) return;
-    }
+  // Saat mode "all", tampilkan rute utama melingkar seluruh halte kampus (LIN-01) agar peta bersih
+  const routesToRender = activeModeFilter === "all"
+    ? [TRANSINFO_DATA.routes[0]]
+    : TRANSINFO_DATA.routes.filter(r => r.id === activeModeFilter || r.type === activeModeFilter);
 
+  routesToRender.forEach(route => {
     // Garis casing bawah (glow kontras tinggi di atas peta satelit)
     L.polyline(route.path, {
       color: "#000000",
@@ -154,10 +153,10 @@ function renderAllRoutesPolylines() {
       lineJoin: "round"
     }).addTo(routesLayerGroup);
 
-    // Garis utama rute dengan warna koridor
+    // Garis utama rute dengan warna biru transit resmi (#0284c7)
     const polyline = L.polyline(route.path, {
-      color: route.badgeColor,
-      weight: 4.5,
+      color: "#0284c7",
+      weight: 5,
       opacity: 0.95,
       dashArray: "8, 6",
       lineCap: "round",
@@ -166,7 +165,7 @@ function renderAllRoutesPolylines() {
 
     const popupContent = `
       <div class="popup-inner">
-        <div class="popup-badge" style="background:${route.badgeColor}; color:#fff;">
+        <div class="popup-badge" style="background:#0284c7; color:#fff;">
           ${route.code}
         </div>
         <div class="popup-title">${route.name}</div>
@@ -187,43 +186,9 @@ function renderAllRoutesPolylines() {
 // -------------------------------------------------------------
 function renderTrafficPolylines() {
   trafficLayerGroup.clearLayers();
-
-  TRANSINFO_DATA.trafficSegments.forEach(segment => {
-    // Garis halo/glow hitam tebal untuk kontras di atas foto satelit
-    L.polyline(segment.coords, {
-      color: "#000000",
-      weight: 9,
-      opacity: 0.6,
-      lineCap: "round",
-      lineJoin: "round"
-    }).addTo(trafficLayerGroup);
-
-    // Garis status utama
-    const polyline = L.polyline(segment.coords, {
-      color: segment.color,
-      weight: 5,
-      opacity: 1,
-      dashArray: segment.status === "congested" ? "7, 5" : null,
-      lineCap: "round",
-      lineJoin: "round"
-    }).addTo(trafficLayerGroup);
-
-    const popupContent = `
-      <div class="popup-inner">
-        <div class="popup-badge" style="background:${segment.color}; color:#fff;">
-          ${segment.statusLabel.toUpperCase()}
-        </div>
-        <div class="popup-title">${segment.roadName}</div>
-        <div class="popup-subtitle">${segment.description}</div>
-        <div style="font-size:0.75rem; color:#cbd5e1; display:flex; justify-content:space-between; margin-top:6px; padding-top:6px; border-top:1px solid rgba(255,255,255,0.1);">
-          <span><i class="fa-solid fa-gauge-high"></i> Kecepatan: <b>${segment.speedKmH} km/h</b></span>
-          <span><i class="fa-regular fa-clock"></i> Tunda: <b>${segment.delayMinutes}</b></span>
-        </div>
-      </div>
-    `;
-    polyline.bindPopup(popupContent);
-  });
+  // Garis lalu lintas merah, kuning, dan hijau dinonaktifkan agar peta bersih dan fokus pada rute perjalanan bus
 }
+
 
 // -------------------------------------------------------------
 // 5. Render Marker Halte / Zona Bus USU (Gaya Google Maps Berlabel Jelas)
@@ -422,10 +387,6 @@ function renderLiveVehicles() {
     if (vehicle.type === "angkot") {
       icon = "fa-bolt"; // Mobil listrik / EV
       bgGradient = "linear-gradient(135deg, #06b6d4, #0891b2)";
-    } else if (vehicle.routeId === "LIN-02") {
-      bgGradient = "linear-gradient(135deg, #10b981, #059669)";
-    } else if (vehicle.routeId === "LIN-03") {
-      bgGradient = "linear-gradient(135deg, #8b5cf6, #6d28d9)";
     }
 
     const customVehicleIcon = L.divIcon({
