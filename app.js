@@ -11,7 +11,6 @@ let esriSatelliteLayer;
 let osmLayer;
 let currentBaseLayer = "hybrid";
 
-let trafficLayerGroup;
 let stopsLayerGroup;
 let routesLayerGroup;
 let vehiclesLayerGroup;
@@ -19,31 +18,99 @@ let activeRoutePolyline = null;
 let currentOriginId = "HLT-01"; // Halte 1: Pintu 1 USU
 let currentDestId = "HLT-08";   // Halte 8 (HLT-08): Pintu 4 USU
 let activeModeFilter = "all";
-let isTrafficVisible = true;
 let isStopsVisible = true;
 let isStopLabelsVisible = true;
 let stopMarkersMap = {};
 let isRoutesVisible = true;
-let isVehiclesVisible = true;
+let isVehiclesVisible = false;
+
+// Konfigurasi Google Maps Platform API Key Resmi (Aman: Dimuat dari config.js atau localStorage)
+function getResolvedGoogleMapsApiKey() {
+  if (typeof window !== "undefined" && window.ENV_CONFIG && window.ENV_CONFIG.GOOGLE_MAPS_API_KEY) {
+    const key = window.ENV_CONFIG.GOOGLE_MAPS_API_KEY.trim();
+    if (key && !key.includes("MASUKKAN_") && !key.includes("YOUR_API_KEY")) {
+      return key;
+    }
+  }
+  if (typeof TRANSINFO_DATA !== "undefined" && TRANSINFO_DATA.googleMapsConfig && TRANSINFO_DATA.googleMapsConfig.apiKey) {
+    const key = TRANSINFO_DATA.googleMapsConfig.apiKey.trim();
+    if (key && !key.includes("MASUKKAN_") && !key.includes("YOUR_API_KEY")) {
+      return key;
+    }
+  }
+  try {
+    const stored = localStorage.getItem("LINUS_GMAPS_KEY");
+    if (stored && stored.trim() && !stored.includes("MASUKKAN_")) {
+      return stored.trim();
+    }
+  } catch (e) {
+    // localStorage tidak dapat diakses
+  }
+  return "";
+}
+
+const GOOGLE_MAPS_API_KEY = getResolvedGoogleMapsApiKey();
 
 // Inisialisasi Aplikasi Saat Halaman Selesai Dimuat
 document.addEventListener("DOMContentLoaded", () => {
+  initGoogleMapsServices();
   initMap();
   initTicker();
   initRealtimeClock();
   populateDropdowns();
-  renderTrafficPanel();
   renderUpcomingDepartures("HLT-01");
   renderHalteDirectory();
   setupEventListeners();
-  startVehicleSimulation();
+  // startVehicleSimulation(); // GPS bus dinonaktifkan sementara menunggu data GPS asli armada
 
-  // Jalankan pencarian rute default awal (Pintu 1 -> Fakultas Teknik)
+  // Jalankan pencarian rute default awal (Pintu 1 -> Pintu 4)
   calculateRoute();
 });
 
 // -------------------------------------------------------------
-// 1. Inisialisasi Peta Leaflet Kampus USU Padang Bulan (Google Satelit Hybrid)
+// 0. Inisialisasi Layanan Google Maps Platform SDK
+// -------------------------------------------------------------
+function initGoogleMapsServices() {
+  const badge = document.getElementById("google-api-status-badge");
+
+  if (GOOGLE_MAPS_API_KEY) {
+    // Muat SDK Google Maps JavaScript jika kunci API tersedia
+    if (typeof google === "undefined" || !google.maps) {
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(GOOGLE_MAPS_API_KEY)}&libraries=places`;
+      script.async = true;
+      script.defer = true;
+      script.onload = () => {
+        console.log("✅ Google Maps Platform SDK Terhubung:", GOOGLE_MAPS_API_KEY.substring(0, 8) + "...");
+        if (badge) {
+          badge.title = `Google Maps Platform API Terhubung Resmi (${GOOGLE_MAPS_API_KEY.substring(0, 8)}...)`;
+          badge.style.display = "inline-flex";
+        }
+      };
+      script.onerror = () => {
+        console.warn("⚠️ Gagal memuat Google Maps SDK atau kunci dibatasi domain.");
+      };
+      document.head.appendChild(script);
+    } else {
+      console.log("✅ Google Maps Platform SDK Terhubung:", GOOGLE_MAPS_API_KEY.substring(0, 8) + "...");
+      if (badge) {
+        badge.title = `Google Maps Platform API Terhubung Resmi (${GOOGLE_MAPS_API_KEY.substring(0, 8)}...)`;
+        badge.style.display = "inline-flex";
+      }
+    }
+  } else {
+    // Jika config.js belum ada (misal di GitHub clone publik), peta tetap aktif dengan tile bawaan
+    console.info("ℹ️ Google Maps API Key belum disetel di config.js. Berjalan dalam mode satelit bawaan.");
+    if (badge) {
+      badge.innerHTML = `<i class="fa-solid fa-map-location-dot" style="color: #10b981;"></i> <span>Peta Kampus: Aktif</span>`;
+      badge.title = "Peta satelit aktif. Untuk mengaktifkan Google Maps SDK resmi, salin config.example.js ke config.js dan isi API Key.";
+      badge.style.display = "inline-flex";
+    }
+  }
+}
+
+// -------------------------------------------------------------
+// 1. Inisialisasi Peta Leaflet Kampus USU Padang Bulan (Google Satelit Hybrid Terhubung API Key)
 // -------------------------------------------------------------
 function initMap() {
   const defaultCenter = TRANSINFO_DATA.campusMeta.center || [3.561676, 98.6563423];
@@ -58,28 +125,44 @@ function initMap() {
     zoomControl: false
   });
 
+  const keyParam = GOOGLE_MAPS_API_KEY ? `&key=${encodeURIComponent(GOOGLE_MAPS_API_KEY)}` : "";
+
   // 1. Base Layer Utama: Google Maps Satelit Hybrid (Foto Udara Nyata + Label Jalan & Gedung)
-  // Ini adalah tampilan persis seperti screenshot Google Maps Universitas Sumatera Utara yang dikirim pengguna
-  googleHybridLayer = L.tileLayer("https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}", {
+  // Terhubung langsung ke Google Maps Tile API dengan API Key Resmi
+  googleHybridLayer = L.tileLayer(`https://mt{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}${keyParam}`, {
     subdomains: ["0", "1", "2", "3"],
     maxZoom: 20,
     attribution: '&copy; Google Maps &bull; Universitas Sumatera Utara (USU)'
   });
 
   // 2. Base Layer Pilihan: Google Peta Jalan (Roadmap)
-  googleRoadmapLayer = L.tileLayer("https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
+  googleRoadmapLayer = L.tileLayer(`https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}${keyParam}`, {
     subdomains: ["0", "1", "2", "3"],
     maxZoom: 20,
     attribution: '&copy; Google Maps'
   });
 
-  // 3. Base Layer Pilihan: Esri Citra Satelit Beresolusi Tinggi
+  // 3. Base Layer Pilihan: Google Satelit Murni (Foto Udara Bersih Tanpa Label)
+  const googleSatelliteLayer = L.tileLayer(`https://mt{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}${keyParam}`, {
+    subdomains: ["0", "1", "2", "3"],
+    maxZoom: 20,
+    attribution: '&copy; Google Maps'
+  });
+
+  // 4. Base Layer Pilihan: Google Medan (Terrain & Topografi Kampus)
+  const googleTerrainLayer = L.tileLayer(`https://mt{s}.google.com/vt/lyrs=p&x={x}&y={y}&z={z}${keyParam}`, {
+    subdomains: ["0", "1", "2", "3"],
+    maxZoom: 20,
+    attribution: '&copy; Google Maps'
+  });
+
+  // 5. Base Layer Pilihan: Esri Citra Satelit Beresolusi Tinggi
   esriSatelliteLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
     maxZoom: 19,
     attribution: '&copy; Esri World Imagery'
   });
 
-  // 4. Base Layer Pilihan: OpenStreetMap Standar
+  // 6. Base Layer Pilihan: OpenStreetMap Standar
   osmLayer = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
     attribution: '&copy; OpenStreetMap contributors'
@@ -92,6 +175,8 @@ function initMap() {
   const baseMaps = {
     "🛰️ Google Satelit (Hybrid)": googleHybridLayer,
     "🗺️ Google Peta Jalan": googleRoadmapLayer,
+    "📷 Google Satelit Murni": googleSatelliteLayer,
+    "🏔️ Google Medan (Terrain)": googleTerrainLayer,
     "🌍 Esri Citra Satelit": esriSatelliteLayer,
     "🌿 OpenStreetMap": osmLayer
   };
@@ -102,15 +187,13 @@ function initMap() {
 
   // Inisialisasi Layer Groups
   routesLayerGroup = L.layerGroup().addTo(map);
-  trafficLayerGroup = L.layerGroup();
   stopsLayerGroup = L.layerGroup().addTo(map);
   vehiclesLayerGroup = L.layerGroup().addTo(map);
 
   // Render Data Awal ke Peta
   renderAllRoutesPolylines();
-  renderTrafficPolylines();
   renderStopMarkers();
-  renderLiveVehicles();
+  // renderLiveVehicles(); // GPS bus dinonaktifkan sementara menunggu data GPS asli armada
 }
 
 // -------------------------------------------------------------
@@ -146,19 +229,18 @@ function renderAllRoutesPolylines() {
   routesToRender.forEach(route => {
     // Garis casing bawah (glow kontras tinggi di atas peta satelit)
     L.polyline(route.path, {
-      color: "#000000",
+      color: "#003b6f",
       weight: 7,
-      opacity: 0.5,
+      opacity: 0.6,
       lineCap: "round",
       lineJoin: "round"
     }).addTo(routesLayerGroup);
 
-    // Garis utama rute dengan warna biru transit resmi (#0284c7)
+    // Garis utama rute dengan warna biru transit resmi (#0284c7) - GARIS SOLID
     const polyline = L.polyline(route.path, {
       color: "#0284c7",
       weight: 5,
-      opacity: 0.95,
-      dashArray: "8, 6",
+      opacity: 1,
       lineCap: "round",
       lineJoin: "round"
     }).addTo(routesLayerGroup);
@@ -182,16 +264,7 @@ function renderAllRoutesPolylines() {
 }
 
 // -------------------------------------------------------------
-// 4. Render Layer Kemacetan Jalan di Lingkungan Kampus & Gerbang
-// -------------------------------------------------------------
-function renderTrafficPolylines() {
-  trafficLayerGroup.clearLayers();
-  // Garis lalu lintas merah, kuning, dan hijau dinonaktifkan agar peta bersih dan fokus pada rute perjalanan bus
-}
-
-
-// -------------------------------------------------------------
-// 5. Render Marker Halte / Zona Bus USU (Gaya Google Maps Berlabel Jelas)
+// 4. Render Marker Halte / Zona Bus USU (Gaya Google Maps Berlabel Jelas)
 // -------------------------------------------------------------
 function renderStopMarkers() {
   stopsLayerGroup.clearLayers();
@@ -218,7 +291,7 @@ function renderStopMarkers() {
       iconClass = "fa-person-running"; // 2. Halte Gelanggang Mahasiswa
       pinColorClass = "pin-amber";
     } else if (stop.id === "HLT-03") {
-      iconClass = "fa-scale-balanced"; // 3. Halte Hukum & FIB USU
+      iconClass = "fa-scale-balanced"; // 3. Halte Hukum
       pinColorClass = "pin-violet";
     } else if (stop.id === "HLT-04") {
       iconClass = "fa-landmark-dome"; // 4. Halte FISIP USU
@@ -375,90 +448,15 @@ function renderHalteDirectory(filterQuery = "") {
 }
 
 // -------------------------------------------------------------
-// 6. Render & Simulasi Armada Linus Transit Bergerak Real-Time
+// 6. Render & Simulasi Armada Linus Transit Bergerak Real-Time (Dinonaktifkan Sementara)
 // -------------------------------------------------------------
 function renderLiveVehicles() {
   vehiclesLayerGroup.clearLayers();
-
-  TRANSINFO_DATA.liveVehicles.forEach(vehicle => {
-    let icon = "fa-bus";
-    let bgGradient = "linear-gradient(135deg, #0284c7, #0369a1)";
-
-    if (vehicle.type === "angkot") {
-      icon = "fa-bolt"; // Mobil listrik / EV
-      bgGradient = "linear-gradient(135deg, #06b6d4, #0891b2)";
-    }
-
-    const customVehicleIcon = L.divIcon({
-      className: "custom-vehicle-marker-wrapper",
-      html: `
-        <div class="custom-vehicle-marker" style="width:34px; height:34px; background:${bgGradient}; border:2px solid #ffffff; box-shadow:0 0 14px rgba(56, 189, 248, 0.9);" title="${vehicle.label}">
-          <i class="fa-solid ${icon}"></i>
-        </div>
-      `,
-      iconSize: [34, 34],
-      iconAnchor: [17, 17],
-      popupAnchor: [0, -20]
-    });
-
-    const marker = L.marker(vehicle.currentCoord, { icon: customVehicleIcon });
-
-    const popupContent = `
-      <div class="popup-inner">
-        <div class="popup-badge" style="background:#059669; color:#fff;">
-          <i class="fa-solid fa-tower-broadcast"></i> GPS BUS KAMPUS AKTIF
-        </div>
-        <div class="popup-title">${vehicle.label}</div>
-        <div class="popup-subtitle">Koridor: ${vehicle.routeId} &bull; Kecepatan: ${vehicle.speed}</div>
-        
-        <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; font-size:0.75rem; margin:8px 0; border:1px solid rgba(255,255,255,0.08);">
-          <div style="color:#94a3b8;">Menuju Pemberhentian:</div>
-          <div style="font-weight:700; color:#38bdf8; font-size:0.85rem; margin-top:2px;">
-            <i class="fa-solid fa-arrow-right"></i> ${vehicle.nextStop}
-          </div>
-          <div style="color:#4ade80; margin-top:5px;">
-            <i class="fa-regular fa-clock"></i> Estimasi Tiba (ETA): <b>${vehicle.etaToNext} menit</b>
-          </div>
-          <div style="color:#cbd5e1; margin-top:3px;">
-            <i class="fa-solid fa-users"></i> Kapasitas Penumpang: <b>${vehicle.occupancy}</b>
-          </div>
-        </div>
-        <div style="font-size:0.7rem; color:#94a3b8; font-style:italic;">
-          * Layanan Linus Transit gratis untuk seluruh civitas akademika.
-        </div>
-      </div>
-    `;
-
-    marker.bindPopup(popupContent);
-    marker.addTo(vehiclesLayerGroup);
-    vehicle._marker = marker;
-  });
+  // GPS bus dinonaktifkan sementara menunggu data GPS asli dari armada bus kampus
 }
 
 function startVehicleSimulation() {
-  // Menggerakkan posisi bus di sepanjang koordinat rute kampusnya secara berkala
-  setInterval(() => {
-    TRANSINFO_DATA.liveVehicles.forEach(vehicle => {
-      const route = TRANSINFO_DATA.routes.find(r => r.id === vehicle.routeId);
-      if (!route || !route.path || route.path.length === 0) return;
-
-      // Geser index koordinat rute
-      vehicle.currentCoordIndex = (vehicle.currentCoordIndex + 1) % route.path.length;
-      const targetCoord = route.path[vehicle.currentCoordIndex];
-
-      // Berikan pergerakan halus dengan sedikit variasi realistis
-      const deltaLat = (Math.random() - 0.5) * 0.00015;
-      const deltaLng = (Math.random() - 0.5) * 0.00015;
-      vehicle.currentCoord = [targetCoord[0] + deltaLat, targetCoord[1] + deltaLng];
-
-      // Perbarui estimasi ETA ke halte berikutnya
-      vehicle.etaToNext = Math.max(1, (vehicle.etaToNext - 1) <= 0 ? 4 : vehicle.etaToNext - 1);
-
-      if (vehicle._marker) {
-        vehicle._marker.setLatLng(vehicle.currentCoord);
-      }
-    });
-  }, 4000);
+  // GPS bus dinonaktifkan sementara menunggu integrasi perangkat GPS asli dari armada bus
 }
 
 // Helper: Potong jalur jalan nyata antara dua titik halte agar garis rute mengikuti jalan kampus
@@ -677,7 +675,8 @@ function highlightRouteOnMap(rec) {
     color: "#38bdf8",
     weight: 6.5,
     opacity: 0.95,
-    dashArray: "10, 8"
+    lineCap: "round",
+    lineJoin: "round"
   }).addTo(map);
 
   map.fitBounds(activeRoutePolyline.getBounds(), {
@@ -687,49 +686,7 @@ function highlightRouteOnMap(rec) {
 }
 
 // -------------------------------------------------------------
-// 9. Render Panel Pantauan Lalu Lintas Kampus
-// -------------------------------------------------------------
-function renderTrafficPanel() {
-  const container = document.getElementById("traffic-hotspots-list");
-  if (!container) return;
-
-  container.innerHTML = "";
-
-  TRANSINFO_DATA.trafficSegments.forEach(segment => {
-    const card = document.createElement("div");
-    card.className = "hotspot-card";
-    card.innerHTML = `
-      <div class="hotspot-info">
-        <div class="hotspot-title">${segment.roadName}</div>
-        <div class="hotspot-cause"><i class="fa-solid fa-triangle-exclamation"></i> ${segment.description}</div>
-      </div>
-      <div class="hotspot-meta">
-        <span class="hotspot-badge" style="background:${segment.color}; color:#fff;">${segment.statusLabel}</span>
-        <div class="hotspot-speed"><i class="fa-solid fa-gauge-high"></i> ${segment.speedKmH} km/h</div>
-      </div>
-    `;
-
-    // Klik untuk fokus ke jalan tersebut
-    card.addEventListener("click", () => {
-      const bounds = L.latLngBounds(segment.coords);
-      map.fitBounds(bounds, { padding: [80, 80] });
-
-      trafficLayerGroup.eachLayer(layer => {
-        if (layer.getLatLngs && layer.getPopup) {
-          const latLngs = layer.getLatLngs();
-          if (latLngs.length > 0 && Math.abs(latLngs[0].lat - segment.coords[0][0]) < 0.001) {
-            layer.openPopup();
-          }
-        }
-      });
-    });
-
-    container.appendChild(card);
-  });
-}
-
-// -------------------------------------------------------------
-// 10. Render Papan Keberangkatan Halte (Digital Board)
+// 9. Render Papan Keberangkatan Halte (Digital Board)
 // -------------------------------------------------------------
 function renderUpcomingDepartures(stopId) {
   const departures = getUpcomingDeparturesForStop(stopId);
@@ -801,12 +758,12 @@ function flyToCampusLandmark(landmarkKey) {
   const landmarks = {
     pintu1: { coord: [3.56645, 98.66020], zoom: 18, stopId: "HLT-01", name: "1. Halte Linus Transit Pintu 1" },
     gelanggang: { coord: [3.56465, 98.66022], zoom: 18, stopId: "HLT-02", name: "2. Halte Linus Transit Gelanggang Mahasiswa" },
-    hukum: { coord: [3.55820, 98.66040], zoom: 18, stopId: "HLT-03", name: "3. Halte Hukum & FIB USU" },
-    fisip: { coord: [3.55645, 98.65720], zoom: 18, stopId: "HLT-04", name: "4. Halte FISIP USU" },
-    feb: { coord: [3.55770, 98.65635], zoom: 18, stopId: "HLT-05", name: "5. Fakultas Ekonomi & Bisnis (FEB USU)" },
-    fmipa: { coord: [3.55906, 98.65460], zoom: 18, stopId: "HLT-06", name: "6. Fakultas MIPA USU (Jl. Bioteknologi)" },
-    vokasi: { coord: [3.55820, 98.65398], zoom: 18, stopId: "HLT-07", name: "7. Fakultas Vokasi & Bioteknologi" },
-    pintu4: { coord: [3.56380, 98.65295], zoom: 18, stopId: "HLT-08", name: "8. Halte Linus Transit Pintu 4" },
+    hukum: { coord: [3.55817, 98.66047], zoom: 18, stopId: "HLT-03", name: "3. Halte Hukum" },
+    fisip: { coord: [3.55634, 98.65719], zoom: 18, stopId: "HLT-04", name: "4. Halte FISIP USU" },
+    feb: { coord: [3.557548, 98.6561279], zoom: 18, stopId: "HLT-05", name: "5. Fakultas Ekonomi & Bisnis (FEB USU)" },
+    fmipa: { coord: [3.55905, 98.65459], zoom: 18, stopId: "HLT-06", name: "6. Fakultas MIPA USU (Jl. Bioteknologi)" },
+    vokasi: { coord: [3.55965, 98.65291], zoom: 18, stopId: "HLT-07", name: "7. Halte Fakultas Vokasi (Jl. Tri Dharma)" },
+    pintu4: { coord: [3.56380, 98.65303], zoom: 18, stopId: "HLT-08", name: "8. Halte Linus Transit Pintu 4" },
     pusat: { coord: [3.561676, 98.6563423], zoom: 16.5, name: "Pusat Kampus USU Padang Bulan" }
   };
 
@@ -882,21 +839,6 @@ function setupEventListeners() {
   if (btnToggleBasemap) {
     btnToggleBasemap.addEventListener("click", () => {
       toggleBaseMapLayer();
-    });
-  }
-
-  // Toggle Layer Kemacetan (Tombol Mengambang)
-  const btnToggleTraffic = document.getElementById("tool-toggle-traffic");
-  if (btnToggleTraffic) {
-    btnToggleTraffic.addEventListener("click", () => {
-      isTrafficVisible = !isTrafficVisible;
-      if (isTrafficVisible) {
-        map.addLayer(trafficLayerGroup);
-        btnToggleTraffic.classList.add("active");
-      } else {
-        map.removeLayer(trafficLayerGroup);
-        btnToggleTraffic.classList.remove("active");
-      }
     });
   }
 

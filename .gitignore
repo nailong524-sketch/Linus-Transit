@@ -1,1 +1,18 @@
-.vercel
+# Vercel & Deployment
+.vercel/
+
+# Kunci API & Konfigurasi Lingkungan Lokal (JANGAN DI-UPLOAD KE GITHUB)
+config.js
+.env
+.env.local
+.env.*.local
+*.local
+
+# Node & Package Managers
+node_modules/
+package-lock.json
+
+# IDE & OS Temporary Files
+.DS_Store
+Thumbs.db
+*.log

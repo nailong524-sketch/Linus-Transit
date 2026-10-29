@@ -7,7 +7,7 @@
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Linus Transit - Peta Rute Bus Kampus Universitas Sumatera Utara (USU)</title>
   <meta name="description"
-    content="Peta interaktif rute Linus Transit, panduan halte kampus, jadwal kedatangan bus real-time, dan pemantau kondisi jalan di Universitas Sumatera Utara, Medan.">
+    content="Peta interaktif rute Linus Transit, panduan halte kampus, jadwal kedatangan bus real-time, dan panduan perjalanan di Universitas Sumatera Utara, Medan.">
 
   <!-- Progressive Web App (PWA) Meta &amp; Manifest -->
   <link rel="manifest" href="manifest.json">
@@ -77,6 +77,12 @@
         <span>Layanan Bus Aktif (07.00 - 17.00 WIB)</span>
       </div>
 
+      <!-- Google Maps API Status Badge -->
+      <div class="google-api-badge" id="google-api-status-badge" title="Google Maps Platform API Terhubung Resmi">
+        <i class="fa-brands fa-google" style="color: #4285F4;"></i>
+        <span>Google Maps API: Terhubung</span>
+      </div>
+
       <div class="time-display" id="realtime-clock">
         <i class="fa-regular fa-clock"></i> 00:00:00 WIB
       </div>
@@ -110,7 +116,7 @@
       <i class="fa-solid fa-person-running" style="color: #f59e0b;"></i> 2. Halte Gelanggang
     </button>
     <button type="button" class="btn-landmark-chip" onclick="flyToCampusLandmark('hukum')">
-      <i class="fa-solid fa-scale-balanced" style="color: #8b5cf6;"></i> 3. Halte Hukum &amp; FIB
+      <i class="fa-solid fa-scale-balanced" style="color: #8b5cf6;"></i> 3. Halte Hukum
     </button>
     <button type="button" class="btn-landmark-chip" onclick="flyToCampusLandmark('fisip')">
       <i class="fa-solid fa-landmark-dome" style="color: #a855f7;"></i> 4. Halte FISIP USU
@@ -140,7 +146,7 @@
   <!-- Main Container: Sidebar + Map -->
   <main class="main-wrapper">
 
-    <!-- Sidebar Panel (Trip Planner, Traffic, Schedules, Guide) -->
+    <!-- Sidebar Panel (Trip Planner, Stops Directory, Schedules, Guide) -->
     <aside class="app-sidebar">
       <!-- Mobile Sheet Drag Handle -->
       <div class="sidebar-drag-handle" id="sheet-drag-handle" style="display:none;" title="Tutup / Buka Panel"></div>
@@ -153,10 +159,6 @@
         <button type="button" class="tab-btn" data-tab="pane-halte-directory">
           <i class="fa-solid fa-map-location-dot"></i>
           <span>Daftar Halte</span>
-        </button>
-        <button type="button" class="tab-btn" data-tab="pane-traffic">
-          <i class="fa-solid fa-traffic-light"></i>
-          <span>Lalu Lintas</span>
         </button>
         <button type="button" class="tab-btn" data-tab="pane-schedule">
           <i class="fa-solid fa-bus-simple"></i>
@@ -252,62 +254,6 @@
           </div>
         </div>
 
-        <!-- ==================== TAB 3: PANTAU LALU LINTAS KAMPUS ==================== -->
-        <div class="tab-pane" id="pane-traffic">
-          <div class="panel-header">
-            <h2><i class="fa-solid fa-triangle-exclamation" style="color: var(--traffic-yellow);"></i> Pantauan Gerbang
-              &amp; Jalan USU</h2>
-            <p>Kondisi akses gerbang luar dan sirkulasi jalan internal di dalam kampus Padang Bulan.</p>
-          </div>
-
-          <div class="traffic-overview-box">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span style="font-size:0.85rem; font-weight:700; color:var(--text-main);">Kondisi Akses Kampus</span>
-              <span
-                style="font-size:0.75rem; background:rgba(16,185,129,0.2); color:#6ee7b7; padding:3px 8px; border-radius:999px; font-weight:700;">Tertib
-                &amp; Lancar</span>
-            </div>
-
-            <div class="traffic-stats-grid">
-              <div class="traffic-stat-card">
-                <div class="stat-value" style="color: #ef4444;">1</div>
-                <div class="stat-label">Gerbang Padat</div>
-              </div>
-              <div class="traffic-stat-card">
-                <div class="stat-value" style="color: #eab308;">2</div>
-                <div class="stat-label">Ramai Lancar</div>
-              </div>
-              <div class="traffic-stat-card">
-                <div class="stat-value" style="color: #22c55e;">25 km/h</div>
-                <div class="stat-label">Kec. Aman Kampus</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="traffic-legend-mini">
-            <div class="legend-item">
-              <div class="legend-color-bar" style="background:var(--traffic-green);"></div>
-              <span>Lancar (&gt;25 km/h)</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color-bar" style="background:var(--traffic-yellow);"></div>
-              <span>Ramai (15-25 km/h)</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color-bar" style="background:var(--traffic-red);"></div>
-              <span>Padat (&lt;15 km/h)</span>
-            </div>
-          </div>
-
-          <div class="results-section-title">
-            <span>Daftar Ruas Jalan &amp; Titik Pantauan</span>
-          </div>
-
-          <div id="traffic-hotspots-list">
-            <!-- Kartu titik macet dirender via JS -->
-          </div>
-        </div>
-
         <!-- ==================== TAB 3: JADWAL &amp; HALTE ==================== -->
         <div class="tab-pane" id="pane-schedule">
           <div class="panel-header">
@@ -340,8 +286,7 @@
           <div
             style="margin-top:20px; background:rgba(16,185,129,0.06); border:1px dashed rgba(16,185,129,0.3); border-radius:var(--radius-md); padding:14px; font-size:0.8rem; color:var(--text-muted);">
             <i class="fa-solid fa-circle-info" style="color:var(--accent-emerald); margin-right:6px;"></i>
-            <b>Tips Menunggu Linus Transit:</b> Armada bus kampus berkeliling terus-menerus. Posisi bus diperbarui secara
-            real-time melalui simulasi sensor GPS di peta.
+            <b>Informasi Operasional:</b> Pelacakan posisi armada bus GPS saat ini dinonaktifkan sementara menunggu data integrasi sensor GPS asli dari armada bus kampus USU.
           </div>
         </div>
 
@@ -411,8 +356,8 @@
 
       <!-- Quick Status Overlay -->
       <div class="map-status-pill">
-        <i class="fa-solid fa-circle" style="color:var(--traffic-green); font-size:8px;"></i>
-        <span>Memantau 4 Koridor Linus Transit &amp; 8 Titik Halte Kampus USU (Terverifikasi Google Maps)</span>
+        <i class="fa-solid fa-circle" style="color:var(--accent-emerald); font-size:8px;"></i>
+        <span>Memantau 4 Koridor Bus LinUS &amp; 8 Titik Halte Kampus USU (Terverifikasi Google Maps)</span>
       </div>
 
       <!-- Floating Map Control Buttons -->
@@ -442,7 +387,7 @@
         </button>
       </div>
 
-      <!-- Floating Traffic &amp; Transit Legend -->
+      <!-- Floating Transit Legend -->
       <div class="map-floating-legend">
         <div class="legend-title">
           <i class="fa-solid fa-layer-group"></i> Keterangan Peta Bus USU
@@ -450,13 +395,13 @@
         <div class="legend-rows">
           <div class="legend-row">
             <span style="display:inline-block; width:18px; height:4px; background:#0284c7; border-radius:2px; box-shadow:0 0 6px rgba(2,132,199,0.8);"></span>
-            <span>Rute Bus Linus Transit</span>
+            <span>Rute Armada Bus LinUS (Garis Solid)</span>
           </div>
           <div class="legend-row" style="margin-top:4px; padding-top:4px; border-top:1px solid rgba(255,255,255,0.08);">
             <i class="fa-solid fa-bus" style="color:#0284c7; font-size:12px;"></i>
-            <span>Halte / Zona Linus Transit USU</span>
+            <span>8 Halte Resmi Kampus USU</span>
           </div>
-          <div class="legend-row">
+          <div class="legend-row" style="display:none;" id="legend-row-gps">
             <i class="fa-solid fa-circle-dot" style="color:#10b981; font-size:12px;"></i>
             <span>Armada Bus Bergerak (Live GPS)</span>
           </div>
@@ -479,9 +424,9 @@
       <i class="fa-solid fa-diamond-turn-right"></i>
       <span>Cari Rute</span>
     </button>
-    <button type="button" class="mobile-nav-item" data-tab="pane-traffic">
-      <i class="fa-solid fa-traffic-light"></i>
-      <span>Lalu Lintas</span>
+    <button type="button" class="mobile-nav-item" data-tab="pane-halte-directory">
+      <i class="fa-solid fa-map-location-dot"></i>
+      <span>Halte</span>
     </button>
     <button type="button" class="mobile-nav-item" data-tab="pane-schedule">
       <i class="fa-solid fa-bus-simple"></i>
@@ -492,7 +437,7 @@
       <span>Panduan</span>
     </button>
     <button type="button" class="mobile-nav-item" id="btn-mobile-map-toggle">
-      <i class="fa-solid fa-map-location-dot"></i>
+      <i class="fa-solid fa-map"></i>
       <span>Peta Penuh</span>
     </button>
   </nav>
@@ -617,7 +562,10 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin></script>
 
-  <!-- App Datasets &amp; Application Logic -->
+  <!-- Konfigurasi API Key Lokal (Opsional, diabaikan oleh git) -->
+  <script src="config.js" onerror="/* config.js opsional, jika tidak ada fallback ke mode publik */"></script>
+
+  <!-- App Datasets & Application Logic -->
   <script src="data.js"></script>
   <script src="app.js"></script>
 </body>

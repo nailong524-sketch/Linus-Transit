@@ -1,11 +1,21 @@
 /**
- * Linus Transit - Dataset Transportasi Bus Kampus & Kemacetan Lalu Lintas
+ * Linus Transit - Dataset Transportasi Bus Kampus USU
  * Wilayah: Universitas Sumatera Utara (USU), Kampus Padang Bulan, Medan
  * Koordinat Pusat: 3.561676, 98.6563423
  * Diverifikasi akurat sesuai Google Maps & Rute Aktif Kampus USU
  */
 
 const TRANSINFO_DATA = {
+  // Konfigurasi Google Maps Platform API Resmi
+  googleMapsConfig: {
+    apiKey: (typeof window !== "undefined" && window.ENV_CONFIG && window.ENV_CONFIG.GOOGLE_MAPS_API_KEY && !window.ENV_CONFIG.GOOGLE_MAPS_API_KEY.includes("MASUKKAN"))
+      ? window.ENV_CONFIG.GOOGLE_MAPS_API_KEY.trim()
+      : "",
+    status: "active",
+    libraries: ["places", "geometry"],
+    version: "weekly"
+  },
+
   // Koordinat Kampus USU Padang Bulan
   campusMeta: {
     name: "Universitas Sumatera Utara (USU)",
@@ -61,15 +71,15 @@ const TRANSINFO_DATA = {
     },
     {
       "id": "HLT-03",
-      "name": "Halte Hukum & FIB USU",
+      "name": "Halte Hukum",
       "type": "bus",
-      "modeLabel": "Halte 3 • Klaster Humaniora & Pintu Sumber",
-      "lat": 3.5582,
-      "lng": 98.6604,
-      "address": "Jl. Universitas (Area Fakultas Hukum & Fakultas Ilmu Budaya, Pintu Sumber)",
+      "modeLabel": "Halte 3 • Fakultas Hukum USU",
+      "lat": 3.55817,
+      "lng": 98.66047,
+      "address": "Jl. Universitas (Depan Kompleks Fakultas Hukum USU, Pintu Sumber)",
       "facilities": [
+        "Titik Halte Resmi Google Maps",
         "Gedung FH USU",
-        "Gedung FIB USU",
         "Akses Pintu Sumber",
         "Taman Sastra",
         "Pos Pengamanan"
@@ -84,8 +94,8 @@ const TRANSINFO_DATA = {
       "name": "Halte FISIP USU",
       "type": "bus",
       "modeLabel": "Halte 4 • Fakultas Ilmu Sosial & Ilmu Politik",
-      "lat": 3.55645,
-      "lng": 98.6572,
+      "lat": 3.55634,
+      "lng": 98.65719,
       "address": "Jl. Dr. A. Sofian (Depan Gedung Fakultas Ilmu Sosial & Ilmu Politik USU)",
       "facilities": [
         "Gedung FISIP USU",
@@ -103,8 +113,8 @@ const TRANSINFO_DATA = {
       "name": "Halte FEB USU (Fakultas Ekonomi dan Bisnis)",
       "type": "bus",
       "modeLabel": "Halte 5 • Fakultas Ekonomi dan Bisnis",
-      "lat": 3.5577,
-      "lng": 98.65635,
+      "lat": 3.557548,
+      "lng": 98.6561279,
       "address": "Jl. Prof. Hanafiah (Depan Gedung Fakultas Ekonomi & Bisnis / Anwar Karim Building)",
       "facilities": [
         "Plaza Utama FEB",
@@ -124,10 +134,11 @@ const TRANSINFO_DATA = {
       "name": "Halte FMIPA USU",
       "type": "bus",
       "modeLabel": "Halte 6 • Fakultas MIPA & Klaster Sains",
-      "lat": 3.55906,
-      "lng": 98.6546,
+      "lat": 3.55905,
+      "lng": 98.65459,
       "address": "Jl. Bioteknologi (Depan Parkir Unit 2 FMIPA & Program Doktor Matematika USU)",
       "facilities": [
+        "Titik Halte Resmi Google Maps",
         "Papan Halte FMIPA",
         "Parkir Mobil Unit 2 FMIPA",
         "Gedung S3 Matematika & Fisika",
@@ -142,15 +153,16 @@ const TRANSINFO_DATA = {
     },
     {
       "id": "HLT-07",
-      "name": "Halte Fakultas Vokasi & Bioteknologi",
+      "name": "Halte Fakultas Vokasi",
       "type": "bus",
-      "modeLabel": "Halte 7 • Fakultas Vokasi & Riset Bioteknologi",
-      "lat": 3.5582,
-      "lng": 98.65398,
-      "address": "Jl. Bioteknologi / Gedung Vokasi",
+      "modeLabel": "Halte 7 • Fakultas Vokasi (Jl. Tri Dharma)",
+      "lat": 3.55965,
+      "lng": 98.65291,
+      "address": "Jl. Tri Dharma (Shelter Bus Resmi Depan Kompleks Fakultas Vokasi USU)",
       "facilities": [
-        "Gedung Vokasi USU",
-        "Laboratorium Bioteknologi",
+        "Shelter Bus Kanopi Resmi USU (Jl. Tri Dharma)",
+        "Gedung Fakultas Vokasi",
+        "Akses Jalur Pedestrian Barat",
         "Kantin Sehat"
       ],
       "lines": [
@@ -165,8 +177,8 @@ const TRANSINFO_DATA = {
       "name": "Halte Linus Transit Pintu 4",
       "type": "bus",
       "modeLabel": "Halte 8 • Pintu 4 USU & Parkiran Stadion Mini",
-      "lat": 3.5638,
-      "lng": 98.65295,
+      "lat": 3.56380,
+      "lng": 98.65303,
       "address": "Jl. Tri Dharma (Depan Parkiran Stadion Mini USU / Akses Pintu 4)",
       "facilities": [
         "Akses Pintu 4 USU",
@@ -197,7 +209,7 @@ const TRANSINFO_DATA = {
       fareFormatted: "Gratis Rp 0 (Tunjukkan KTM)",
       operatingHours: "07.00 - 17.00 WIB",
       headway: "5 - 8 Menit",
-      distanceKm: "3.9 km (Loop Utama)",
+      distanceKm: "3.9 km (Loop Utama Kampus USU)",
       estimatedDurationMinutes: 12,
       stopIds: [
         "HLT-01", "HLT-02", "HLT-03", "HLT-04", "HLT-05", "HLT-06", "HLT-07", "HLT-08", "HLT-01"
@@ -213,43 +225,41 @@ const TRANSINFO_DATA = {
         [3.5615, 98.66028],
         [3.56, 98.66032],
         [3.559, 98.66036],
-        [3.5582, 98.6604],
+        [3.55817, 98.66047],
         [3.5574, 98.66044],
         [3.5566, 98.66048],
-        [3.5564, 98.66],
-        [3.55642, 98.6588],
+        [3.55645, 98.6602],
+        [3.55645, 98.6588],
         [3.55645, 98.658],
-        [3.55645, 98.6572],
-        [3.55642, 98.6566],
-        [3.5564, 98.65615],
-        [3.5571, 98.65625],
-        [3.5577, 98.65635],
+        [3.55634, 98.65719],
+        [3.55645, 98.6566],
+        [3.55645, 98.6561279],
+        [3.557, 98.6561279],
+        [3.557548, 98.6561279],
         [3.5582, 98.65615],
-        [3.5586, 98.6559],
-        [3.55906, 98.65588],
+        [3.55906, 98.65612],
         [3.55906, 98.655],
-        [3.55906, 98.6546],
-        [3.55906, 98.65403],
-        [3.5586, 98.654],
-        [3.5582, 98.65398],
-        [3.5586, 98.654],
-        [3.55906, 98.65403],
+        [3.55905, 98.65459],
         [3.55905, 98.65299],
+        [3.55965, 98.65291],
         [3.56068, 98.65302],
         [3.56181, 98.65305],
         [3.56309, 98.65301],
-        [3.5638, 98.65295],
-        [3.5644, 98.65315],
-        [3.5644, 98.6538],
-        [3.5642, 98.6555],
-        [3.5646, 98.656],
-        [3.5651, 98.6566],
-        [3.56545, 98.6573],
-        [3.5657, 98.6582],
-        [3.56578, 98.6592],
-        [3.5658, 98.66018],
-        [3.56645, 98.6602],
-        [3.56733, 98.66008]
+        [3.56380, 98.65303],
+        [3.56440, 98.65315],
+        [3.56509, 98.65319],
+        [3.56635, 98.65326],
+        [3.56718, 98.65329],
+        [3.56738, 98.65330],
+        [3.56738, 98.65349],
+        [3.56735, 98.65487],
+        [3.56735, 98.65592],
+        [3.56734, 98.65755],
+        [3.56734, 98.65848],
+        [3.56734, 98.65900],
+        [3.56733, 98.66008],
+        [3.56685, 98.66014],
+        [3.56645, 98.66020]
       ]
     },
     {
@@ -282,24 +292,30 @@ const TRANSINFO_DATA = {
         [3.5642, 98.6555],
         [3.5644, 98.6538],
         [3.5644, 98.65315],
-        [3.5638, 98.65295],
+        [3.56380, 98.65303],
         [3.56309, 98.65301],
         [3.56181, 98.65305],
         [3.56068, 98.65302],
+        [3.55965, 98.65291],
         [3.55905, 98.65299],
-        [3.55906, 98.65403],
-        [3.55906, 98.6546],
-        [3.55906, 98.65403],
-        [3.5582, 98.65398],
+        [3.55905, 98.65459],
         [3.55905, 98.65299],
         [3.56181, 98.65305],
-        [3.5638, 98.65295],
-        [3.5644, 98.65315],
-        [3.5642, 98.6555],
-        [3.5651, 98.6566],
-        [3.5658, 98.66018],
-        [3.56645, 98.6602],
-        [3.56733, 98.66008]
+        [3.56380, 98.65303],
+        [3.56440, 98.65315],
+        [3.56509, 98.65319],
+        [3.56635, 98.65326],
+        [3.56718, 98.65329],
+        [3.56738, 98.65330],
+        [3.56738, 98.65349],
+        [3.56735, 98.65487],
+        [3.56735, 98.65592],
+        [3.56734, 98.65755],
+        [3.56734, 98.65848],
+        [3.56734, 98.65900],
+        [3.56733, 98.66008],
+        [3.56685, 98.66014],
+        [3.56645, 98.66020]
       ]
     },
     {
@@ -328,32 +344,40 @@ const TRANSINFO_DATA = {
         [3.5615, 98.66028],
         [3.56, 98.66032],
         [3.559, 98.66036],
-        [3.5582, 98.6604],
+        [3.55817, 98.66047],
         [3.5574, 98.66044],
         [3.5566, 98.66048],
         [3.5564, 98.66],
         [3.55642, 98.6588],
         [3.55645, 98.658],
-        [3.55645, 98.6572],
+        [3.55634, 98.65719],
         [3.55642, 98.6566],
         [3.5564, 98.65615],
         [3.5571, 98.65625],
-        [3.5577, 98.65635],
+        [3.557548, 98.6561279],
         [3.55765, 98.6556],
         [3.5576, 98.6548],
-        [3.5577, 98.654],
-        [3.5582, 98.65398],
+        [3.557548, 98.65295],
         [3.55905, 98.65299],
+        [3.55965, 98.65291],
         [3.56068, 98.65302],
         [3.56181, 98.65305],
         [3.56309, 98.65301],
-        [3.5638, 98.65295],
-        [3.5644, 98.65315],
-        [3.5642, 98.6555],
-        [3.5651, 98.6566],
-        [3.5658, 98.66018],
-        [3.56645, 98.6602],
-        [3.56733, 98.66008]
+        [3.56380, 98.65303],
+        [3.56440, 98.65315],
+        [3.56509, 98.65319],
+        [3.56635, 98.65326],
+        [3.56718, 98.65329],
+        [3.56738, 98.65330],
+        [3.56738, 98.65349],
+        [3.56735, 98.65487],
+        [3.56735, 98.65592],
+        [3.56734, 98.65755],
+        [3.56734, 98.65848],
+        [3.56734, 98.65900],
+        [3.56733, 98.66008],
+        [3.56685, 98.66014],
+        [3.56645, 98.66020]
       ]
     },
     {
@@ -370,206 +394,34 @@ const TRANSINFO_DATA = {
       distanceKm: "2.4 km",
       stopIds: ["HLT-05", "HLT-06", "HLT-07", "HLT-08", "HLT-05"],
       path: [
-        [3.5577, 98.65635],
+        [3.557548, 98.6561279],
         [3.5582, 98.65615],
         [3.5586, 98.6559],
         [3.55906, 98.65588],
         [3.55906, 98.655],
-        [3.55906, 98.6546],
-        [3.55906, 98.65403],
-        [3.5582, 98.65398],
+        [3.55905, 98.65459],
         [3.55905, 98.65299],
+        [3.55965, 98.65291],
         [3.56068, 98.65302],
         [3.56181, 98.65305],
         [3.56309, 98.65301],
-        [3.5638, 98.65295],
+        [3.56380, 98.65303],
         [3.56309, 98.65301],
         [3.56181, 98.65305],
         [3.56068, 98.65302],
+        [3.55965, 98.65291],
         [3.55905, 98.65299],
-        [3.55906, 98.65403],
-        [3.5582, 98.65398],
-        [3.5577, 98.654],
-        [3.5576, 98.6548],
-        [3.55765, 98.6556],
-        [3.5571, 98.65625],
-        [3.5577, 98.65635]
+        [3.55905, 98.65459],
+        [3.55906, 98.655],
+        [3.55906, 98.65588],
+        [3.5582, 98.65615],
+        [3.557548, 98.6561279]
       ]
     }
   ],
 
-  // Data Pantauan Kepadatan Lalu Lintas di Kawasan USU & Gerbang Masuk
-  trafficSegments: [
-    {
-      id: "TRF-01",
-      roadName: "Jl. Dr. Mansyur (Gerbang Utama Pintu 1 USU)",
-      status: "congested",
-      statusLabel: "Padat Antrean",
-      speedKmH: 12,
-      color: "#ef4444",
-      description: "Antrean masuk kendaraan jam kuliah di Gerbang Pintu 1 Jl. Dr. Mansyur.",
-      lengthKm: "0.8 km",
-      delayMinutes: "+8 mnt",
-      coords: [
-        [3.56780, 98.65700],
-        [3.56710, 98.65820],
-        [3.56733, 98.66008],
-        [3.56630, 98.66200]
-      ]
-    },
-    {
-      id: "TRF-02",
-      roadName: "Jl. Universitas (Pintu 1 - Gelanggang - Pintu Sumber)",
-      status: "moderate",
-      statusLabel: "Ramai Teratur",
-      speedKmH: 22,
-      color: "#eab308",
-      description: "Jalur utama Linus Transit melintas di depan Gelanggang Mahasiswa & FIB menuju Pintu Sumber.",
-      lengthKm: "1.2 km",
-      delayMinutes: "+2 mnt",
-      coords: [
-        [3.56733, 98.66008],
-        [3.56645, 98.66020],
-        [3.56465, 98.66022],
-        [3.55820, 98.66040],
-        [3.55660, 98.66050]
-      ]
-    },
-    {
-      id: "TRF-03",
-      roadName: "Jl. Sivitas Akademika (Depan Auditorium USU)",
-      status: "smooth",
-      statusLabel: "Lancar Terkendali",
-      speedKmH: 28,
-      color: "#22c55e",
-      description: "Zona hijau tertib penyeberangan mahasiswa di depan Auditorium & Biro Rektorat.",
-      lengthKm: "0.6 km",
-      delayMinutes: "0 mnt",
-      coords: [
-        [3.56580, 98.65900],
-        [3.56460, 98.65600],
-        [3.56380, 98.65380]
-      ]
-    },
-    {
-      id: "TRF-04",
-      roadName: "Jl. Bioteknologi & Tri Dharma (FMIPA - Vokasi)",
-      status: "smooth",
-      statusLabel: "Lancar Asri",
-      speedKmH: 25,
-      color: "#22c55e",
-      description: "Sirkulasi kendaraan di klaster sains, laboratorium FMIPA, dan Gedung Vokasi.",
-      lengthKm: "0.7 km",
-      delayMinutes: "0 mnt",
-      coords: [
-        [3.56180, 98.65500],
-        [3.55906, 98.65460],
-        [3.55820, 98.65398]
-      ]
-    },
-    {
-      id: "TRF-05",
-      roadName: "Jl. Prof. Hanafiah & Dr. A. Sofian (FEB - FISIP)",
-      status: "smooth",
-      statusLabel: "Lancar Asri",
-      speedKmH: 26,
-      color: "#22c55e",
-      description: "Kawasan rindang depan Fakultas Ekonomi dan Bisnis (FEB) & FISIP USU.",
-      lengthKm: "0.7 km",
-      delayMinutes: "0 mnt",
-      coords: [
-        [3.55838, 98.65612],
-        [3.55770, 98.65635],
-        [3.55640, 98.65611],
-        [3.55645, 98.65720]
-      ]
-    },
-    {
-      id: "TRF-06",
-      roadName: "Jl. Almamater (Pusat Fakultas Teknik - GKB)",
-      status: "smooth",
-      statusLabel: "Bebas Hambatan",
-      speedKmH: 28,
-      color: "#22c55e",
-      description: "Jalur sirkulasi internal Fakultas Teknik dan Gedung Kuliah Bersama.",
-      lengthKm: "0.6 km",
-      delayMinutes: "0 mnt",
-      coords: [
-        [3.56460, 98.65600],
-        [3.56180, 98.65500],
-        [3.55950, 98.65600]
-      ]
-    }
-  ],
-
-  // Simulasi Posisi Armada Linus Transit & E-Shuttle Real-Time di Kampus USU
-  liveVehicles: [
-    {
-      id: "BUS-LIN01",
-      routeId: "LIN-01",
-      label: "Linus Transit-01 (Isuzu ELF Biru USU)",
-      type: "bus",
-      speed: "24 km/h",
-      status: "Aktif Melayani",
-      occupancy: "65% (Tersedia Kursi)",
-      nextStop: "Halte Linus Transit Gelanggang Mahasiswa",
-      etaToNext: 2,
-      currentCoordIndex: 1,
-      currentCoord: [3.56645, 98.66020]
-    },
-    {
-      id: "BUS-LIN02",
-      routeId: "LIN-01",
-      label: "Linus Transit-02 (Hino Dutro Kuning Emas)",
-      type: "bus",
-      speed: "20 km/h",
-      status: "Aktif Melayani",
-      occupancy: "80% (Sisa 4 Kursi)",
-      nextStop: "Halte FISIP USU",
-      etaToNext: 3,
-      currentCoordIndex: 8,
-      currentCoord: [3.55645, 98.65720]
-    },
-    {
-      id: "BUS-LIN03",
-      routeId: "LIN-02",
-      label: "Linus Transit-03 (Klaster Sains Hijau)",
-      type: "bus",
-      speed: "18 km/h",
-      status: "Aktif Melayani",
-      occupancy: "50% (Banyak Kursi Kosong)",
-      nextStop: "Halte Linus Transit Pintu 4",
-      etaToNext: 2,
-      currentCoordIndex: 5,
-      currentCoord: [3.56380, 98.65295]
-    },
-    {
-      id: "BUS-LIN04",
-      routeId: "LIN-03",
-      label: "Linus Transit-04 (Klaster Sosiohumaniora Ungu)",
-      type: "bus",
-      speed: "25 km/h",
-      status: "Aktif Melayani",
-      occupancy: "70%",
-      nextStop: "Halte Hukum & FIB USU",
-      etaToNext: 1,
-      currentCoordIndex: 2,
-      currentCoord: [3.55820, 98.66040]
-    },
-    {
-      id: "EV-SHUTTLE01",
-      routeId: "EV-USU",
-      label: "E-Shuttle 01 (Mobil Listrik Wuling EV Mini)",
-      type: "angkot",
-      speed: "16 km/h",
-      status: "Eco Shuttle Aktif",
-      occupancy: "60% (Kapasitas 10 Org)",
-      nextStop: "Halte FMIPA USU",
-      etaToNext: 3,
-      currentCoordIndex: 7,
-      currentCoord: [3.55906, 98.65460]
-    }
-  ],
+  // Posisi Armada GPS Bus Kampus USU (Dinonaktifkan sementara menunggu data GPS asli)
+  liveVehicles: [],
 
   // Live Peringatan / Info Bus Kampus USU
   alerts: [
@@ -586,9 +438,9 @@ const TRANSINFO_DATA = {
       time: "3 menit lalu"
     },
     {
-      type: "warning",
-      tag: "INFO GERBANG",
-      text: "Pintu 1 Jl. Dr. Mansyur terpantau padat antrean mahasiswa jam masuk kuliah.",
+      type: "info",
+      tag: "INFO OPERASIONAL",
+      text: "Seluruh armada bus Linus Transit dan E-Shuttle beroperasi aktif mengitari 8 halte kampus.",
       time: "8 menit lalu"
     },
     {
@@ -623,7 +475,7 @@ function getUpcomingDeparturesForStop(stopId) {
     let destName = "Putaran Kampus USU";
     if (route.id === "LIN-01") destName = "Halte Linus Transit Pintu 1 & Pintu 4";
     else if (route.id === "LIN-02") destName = "Halte Linus Transit Pintu 4 & Vokasi";
-    else if (route.id === "LIN-03") destName = "Halte FISIP & Halte Hukum & FIB";
+    else if (route.id === "LIN-03") destName = "Halte FISIP & Halte Hukum";
     else if (route.id === "EV-USU") destName = "Halte Linus Transit Pintu 4 - FMIPA";
 
     departures.push({

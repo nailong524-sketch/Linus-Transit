@@ -1,6 +1,6 @@
 Add-Type -AssemblyName System.Drawing
 
-function Make-Icon([int]$sz, [string]$path) {
+function New-Icon([int]$sz, [string]$path) {
     $bmp = New-Object System.Drawing.Bitmap($sz, $sz)
     $g = [System.Drawing.Graphics]::FromImage($bmp)
     $g.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
@@ -76,8 +76,8 @@ function Make-Icon([int]$sz, [string]$path) {
 $baseDir = $PSScriptRoot
 if (-not $baseDir) { $baseDir = "." }
 
-Make-Icon 192 "$baseDir\icon-192.png"
-Make-Icon 512 "$baseDir\icon-512.png"
-Make-Icon 512 "$baseDir\icon-maskable.png"
-Make-Icon 180 "$baseDir\apple-touch-icon.png"
+New-Icon 192 "$baseDir\icon-192.png"
+New-Icon 512 "$baseDir\icon-512.png"
+New-Icon 512 "$baseDir\icon-maskable.png"
+New-Icon 180 "$baseDir\apple-touch-icon.png"
 Write-Output 'ICONS_GENERATED_SUCCESSFULLY'
