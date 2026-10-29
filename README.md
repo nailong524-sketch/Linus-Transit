@@ -1,107 +1,81 @@
-# 🚍 Linus Transit - Sistem Navigasi & Peta Rute Bus Kampus Universitas Sumatera Utara (USU)
+# 🚍 Linus Transit - Campus Bus Navigation & Route Map System for the University of North Sumatra (USU)
 
-**Linus Transit** adalah aplikasi web interaktif navigasi transportasi bus kampus digital untuk **Universitas Sumatera Utara (USU) - Kampus Padang Bulan, Medan**.
+*Linus Transit* is an interactive web-based application designed for campus bus navigation at the *University of North Sumatra (USU) – Padang Bulan Campus, Medan*.
 
-Aplikasi ini memetakan rute perjalanan bus kampus, titik perhentian halte/Zona Bus USU di seluruh fakultas, direktori halte interaktif, pemantauan simulasi armada bus GPS real-time, serta panduan tata tertib transportasi civitas akademika USU.
-
----
-
-## 📍 Wilayah Cakupan: Kampus USU Padang Bulan, Medan
-* **Koordinat Pusat Kampus:** `3.561676, 98.6563423`
-* **Jalan Utama Sekitar:** Jl. Dr. Mansyur (Pintu 1 & Pintu 2), Jl. Jamin Ginting / Jl. Dr. Sumarsono (Pintu 3 & Pintu 4), Jl. Almamater, Jl. Tri Dharma, Jl. Prof. Maas, Jl. Universitas.
-* **Fasilitas Utama:** Biro Rektorat & Auditorium USU, Rumah Sakit USU (RS USU), Perpustakaan Pusat & Danau USU, Gelanggang Mahasiswa & Stadion Mini, 15 Fakultas Terpadu.
+The application maps campus bus routes and designated bus stops/zones across all faculties. It features an interactive directory of bus stops, real-time simulated GPS fleet tracking, and a guide to transportation policies for the USU academic community.
 
 ---
 
-## ✨ Fitur Utama
-
-1. **🗺️ Peta Interaktif Kampus USU (Leaflet.js + Google Maps Satelit Hybrid & API Key Resmi)**
-   - Peta digital detail berpusat di Kampus Padang Bulan dengan tampilan Google Satelit Hybrid foto udara nyata.
-   - **Terhubung Google Maps Platform API Resmi** (dikonfigurasi aman via `config.js`, terintegrasi server tile Google Satelit Hybrid & Google Maps JavaScript SDK).
-   - Pilihan layer satelit lengkap: Google Satelit Hybrid, Google Peta Jalan (Roadmap), Google Satelit Murni, Google Medan (Terrain), Esri Satellite, dan OpenStreetMap.
-   - **8 Penanda Halte Resmi / Zona Bus USU Terverifikasi Google Maps** (Halte Linus Transit Pintu 1, Halte Linus Transit Gelanggang Mahasiswa, Halte Linus Transit Pintu 4, Halte FMIPA, Halte Fakultas Vokasi, Halte FEB, Halte FISIP, dan Halte Hukum).
-   - Label nama halte tampil bergaya Google Maps langsung di atas peta satelit (dapat di-toggle dengan tombol label).
-   - Link langsung *"Buka di Google Maps"* pada setiap popup halte untuk verifikasi titik koordinat.
-   - Tab khusus **Direktori Halte Linus Transit** di sidebar dengan fitur pencarian instan dan tombol sorot ke peta.
-   - Pintasan Cepat (*Quick Landmark Jump*) ke titik-titik krusial kampus.
-   - Tombol toggle layer: Rute Linus Transit, Halte Bus, Label Halte, Pusatkan Kampus, Geolocation Saya.
-
-2. **🧭 Perencana Rute Bus Kampus (Campus Trip Planner)**
-   - Pengguna memilih halte asal dan tujuan di lingkungan kampus USU.
-   - Algoritma pencari rute langsung maupun rute transit terpadu (via Hub Biro Rektor / Perpustakaan).
-   - Menghitung estimasi waktu tempuh, jumlah transit halte, instruksi arah bertahap, dan visualisasi jalur polyline bersinar (*active route polyline highlight*).
-   - Tarif: **100% Gratis Rp 0** untuk civitas akademika dengan menunjukkan KTM aktif.
-
-3. **⏱️ Papan Jadwal Digital & Estimasi Tiba Armada (Digital Departure Board)**
-   - Menampilkan armada yang sedang melintas di tiap halte lengkap dengan kode rute, terminus, perkiraan menit tiba (ETA), dan jadwal berikutnya.
-   - **Pelacakan GPS Bus Kampus:** Disiapkan untuk integrasi perangkat GPS real-time bus kampus USU (status saat ini: standby dinonaktifkan sementara menunggu data GPS asli).
-
-4. **📖 Panduan & Tata Tertib Linus Transit USU**
-   - Ketentuan gratis dengan Kartu Tanda Mahasiswa (KTM).
-   - Tata cara pintu masuk: **Mahasiswa Pria naik melalui pintu depan**, **Mahasiswi Wanita naik melalui pintu belakang**.
-   - Jam operasional: **Senin – Jumat pukul 07.00 – 17.00 WIB**.
-   - Inisiatif USU Green Campus bebas emisi.
+## 📍 Coverage Area: USU Padang Bulan Campus, Medan
+* *Campus Center Coordinates:* 3.561676, 98.6563423
+* *Surrounding Main Roads:* Jl. Dr. Mansyur (Gate 1 & Gate 2), Jl. Jamin Ginting / Jl. Dr. Sumarsono (Gate 3 & Gate 4), Jl. Almamater, Jl. Tri Dharma, Jl. Prof. Maas, and Jl. Universitas.
+* *Key Facilities:* Rectorate Building & USU Auditorium, USU Hospital (RS USU), Central Library & USU Lake, Student Center & Mini Stadium, and 15 integrated faculties.
 
 ---
 
-## 🚌 8 Halte Resmi Linus Transit USU (Urutan Rute 1 s.d 8)
+## ✨ Key Features
 
-1. **Halte 1 (`HLT-01`):** Halte Linus Transit Pintu 1 (Jl. Universitas / Gerbang Utama Jl. Dr. Mansyur)
-2. **Halte 2 (`HLT-02`):** Halte Linus Transit Gelanggang Mahasiswa (Jl. Universitas)
-3. **Halte 3 (`HLT-03`):** Halte Hukum (Jl. Universitas / Pintu Sumber)
-4. **Halte 4 (`HLT-04`):** Halte FISIP USU (Jl. Dr. A. Sofian)
-5. **Halte 5 (`HLT-05`):** Halte FEB USU (Jl. Prof. Hanafiah / Depan Anwar Karim)
-6. **Halte 6 (`HLT-06`):** Halte FMIPA USU (Jl. Bioteknologi / Depan Parkir Unit 2 FMIPA & Program Doktor Matematika USU)
-7. **Halte 7 (`HLT-07`):** Halte Fakultas Vokasi (Jl. Tri Dharma / Depan Kompleks Fakultas Vokasi USU)
-8. **Halte 8 (`HLT-08`):** Halte Linus Transit Pintu 4 (Jl. Tri Dharma / Depan Parkiran Stadion Mini USU)
+1. *🗺️ Interactive USU Campus Map (Leaflet.js + Google Satellite Hybrid & Official API Key)*
+   - A detailed digital map centered on the Padang Bulan Campus, featuring a Google Satellite Hybrid view with real aerial imagery.
+   - *Integrated with the Official Google Maps Platform API* (securely configured via `config.js`, utilizing Google Satellite Hybrid tile servers and the Google Maps JavaScript SDK).
+   - Comprehensive map layer options, including: Google Satellite Hybrid, Google Roadmap, Google Satellite, Google Terrain, Esri Satellite, and OpenStreetMap.
+   - - *8 Official USU Bus Stop/Zone Markers Verified on Google Maps* (Linus Transit Gate 1, Student Center, Gate 4, Faculty of Mathematics and Natural Sciences (FMIPA), Vocational Faculty, Faculty of Economics and Business (FEB), Faculty of Social and Political Sciences (FISIP), and Faculty of Law).
+   - Stop labels are displayed in a Google Maps-style format directly over the satellite map (can be toggled on/off via a label button).
+   - "Open in Google Maps" direct link included in each stop's popup for coordinate verification.
+   - Dedicated *Linus Transit Stop Directory* tab in the sidebar, featuring instant search and a "highlight on map" function.
+   - Quick Landmark Jump shortcuts to key campus locations.
+   - Layer toggle buttons: Linus Transit Routes, Bus Stops, Stop Labels, Center on Campus, and My Geolocation.
+
+2. *🧭 Campus Trip Planner*
+   - Users select their origin and destination stops within the USU campus area.
+   - Route-finding algorithm supports both direct and transit-based routes (via the Rectorate Bureau/Library Hub).
+   - Calculates estimated travel time, number of transit stops, step-by-step directions, and provides a glowing polyline visualization of the active route.
+   - Fare: *100% Free (IDR 0)* for the academic community upon presentation of a valid student ID (KTM).
+
+3. *⏱️ Digital Departure Board & Estimated Time of Arrival (ETA)*
+   - Displays buses currently passing through each stop, including route codes, terminal destinations, estimated arrival time (ETA) in minutes, and upcoming schedules.
+   - *Campus Bus GPS Tracking:* Prepared for integration with real-time GPS devices on USU campus buses (current status: standby/temporarily disabled, pending live GPS data).
+4. *📖 Linus Transit USU: Guidelines & Rules*
+   - Free of charge with a valid Student ID Card (KTM).
+   - Boarding procedure: *Male students must board through the front door; female students must board through the rear door*.
+   - Operational hours: *Monday – Friday, 07:00 – 17:00 WIB*.
+   - Part of the USU Green Campus zero-emissions initiative.
+   - ## 🚌 8 Official Linus Transit USU Stops (Route Sequence 1–8)
+
+1. *Stop 1 (HLT-01):* Linus Transit Stop – Gate 1 (Jl. Universitas / Main Gate, Jl. Dr. Mansyur)
+2. *Stop 2 (HLT-02):* Linus Transit Stop – Student Center (Jl. Universitas)
+3. *Stop 3 (HLT-03):* Law Faculty Stop (Jl. Universitas / "Pintu Sumber" Gate)
+4. *Stop 4 (HLT-04):* FISIP USU Stop (Jl. Dr. A. Sofian)
+5. *Stop 5 (HLT-05):* FEB USU Stop (Jl. Prof. Hanafiah / In front of Anwar Karim Building)
+6. *Stop 6 (HLT-06):* FMIPA USU Stop (Jl. Bioteknologi / In front of FMIPA Unit 2 Parking & Doctoral Program in Mathematics)
+7. *Stop 7 (HLT-07):* Vocational Faculty Stop (Jl. Tri Dharma / In front of the Vocational Faculty complex)
+8. *Stop 8 (HLT-08):* Linus Transit Stop – Gate 4 (Jl. Tri Dharma / In front of the USU Mini Stadium parking area)
 
 ---
 
-## 🚌 Rute Koridor Linus Transit
+## 🚌 Linus Transit Corridor Routes
 
-| Koridor | Nama Rute | Klaster yang Dilayani | Warna Indikator |
+| Corridor | Route Name | Areas Served | Indicator Color |
 | :--- | :--- | :--- | :--- |
-| **LIN-1** | Linus Transit Koridor 1 | Lingkar Penuh Berurutan (Pintu 1 – Gelanggang – Hukum – FISIP – FEB – FMIPA – Vokasi – Pintu 4) | Biru Langit (`#0284c7`) |
-| **LIN-2** | Linus Transit Koridor 2 | Klaster Sains & Teknologi (Pintu 1 – Gelanggang – FMIPA – Vokasi – Pintu 4) | Hijau Emerald (`#10b981`) |
-| **LIN-3** | Linus Transit Koridor 3 | Klaster Sosio-Humaniora (Pintu 1 – Gelanggang – Hukum – FISIP – FEB – Vokasi – Pintu 4) | Ungu Violet (`#8b5cf6`) |
-| **EV-USU**| USU E-Shuttle | Mobil Listrik Eco Kampus (FEB – FMIPA – Vokasi – Pintu 4) | Cyan Cerah (`#06b6d4`) |
+| *LIN-1* | Linus Transit Corridor 1 | Full Sequential Loop (Gate 1 – Student Center – Law – FISIP – FEB – FMIPA – Vocational Faculty – Gate 4) | Sky Blue (#0284c7) |
+| *LIN-2* | Linus Transit Corridor 2 | Science & Technology Cluster (Gate 1 – Student Center – Faculty of Mathematics & Natural Sciences – Vocational School – Gate 4) | Emerald Green (#10b981) |
+| *LIN-3* | Linus Transit Corridor 3 | Socio-Humanities Cluster (Gate 1 – Student Center – Faculty of Law – Faculty of Social & Political Sciences – Faculty of Economics & Business – Vocational School – Gate 4) | Violet Purple (#8b5cf6) |
+| *EV-USU*| USU E-Shuttle | Eco-Campus Electric Vehicle (Faculty of Economics & Business – Faculty of Mathematics & Natural Sciences – Vocational School – Gate 4) | Bright Cyan (#06b6d4) |
+
+## 🚀 How to Run the Website
+
+This application is built using *HTML5, pure CSS3, and Vanilla JavaScript* standards, requiring no compilers or complex backend servers.
+
+### Option 1: Open the File Directly
+1. Locate the project folder on your computer.
+2. Double-click the `index.html` file.
+3. Open it using Google Chrome, Microsoft Edge, Mozilla Firefox, etc.
+
+### Option 2: Use Live Server in VS Code
+1. Open the project folder in VS Code.
+2. Right-click on `index.html` and select *"Open with Live Server"*.
+3. The website will run at http://127.0.0.1:5500.
 
 ---
 
-## 🔐 Konfigurasi Kunci API (Aman untuk GitHub)
-
-Demi menjaga keamanan kunci API dan mencegah peringatan kebocoran rahasia dari GitHub Secret Scanning, kunci API tidak dimasukkan langsung ke repositori publik:
-
-1. **Salin template konfigurasi:**
-   ```bash
-   cp config.example.js config.js
-   ```
-2. **Masukkan Google Maps Platform API Key:**
-   Buka file `config.js` dan masukkan API Key Anda:
-   ```javascript
-   window.ENV_CONFIG = {
-     GOOGLE_MAPS_API_KEY: "AIzaSy..."
-   };
-   ```
-3. **Keamanan Otomatis:**
-   File `config.js` sudah didaftarkan pada `.gitignore` sehingga tidak akan ikut ter-upload saat melakukan `git push` ke GitHub. Jika `config.js` tidak diisi, website tetap dapat berjalan dengan peta satelit & peta dasar bawaan.
-
----
-
-## 🚀 Cara Menjalankan Website
-
-Aplikasi ini dibangun menggunakan standar **HTML5, CSS3 murni, dan Vanilla JavaScript**, tanpa memerlukan compiler atau server backend rumit.
-
-### Opsi 1: Buka File Langsung
-1. Buka folder proyek di komputer Anda.
-2. Klik ganda file `index.html`.
-3. Buka di Google Chrome, Microsoft Edge, Mozilla Firefox, dll.
-
-### Opsi 2: Menggunakan Live Server di VS Code
-1. Buka folder proyek di VS Code.
-2. Klik kanan pada `index.html` -> Pilih **"Open with Live Server"**.
-3. Website akan berjalan di `http://127.0.0.1:5500`.
-
----
-
-*Dikembangkan untuk mendukung kemudahan mobilitas civitas akademika Universitas Sumatera Utara (USU) secara efisien, teratur, dan ramah lingkungan.*
+Developed to facilitate the mobility of the academic community at the University of North Sumatra (USU) in an efficient, organized, and eco-friendly manner.
